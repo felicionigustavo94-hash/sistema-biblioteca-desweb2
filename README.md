@@ -1,6 +1,10 @@
 #  Sistema de Gestão de Biblioteca
 
-Projeto semestral desenvolvido para a disciplina de **Desenvolvimento Web II**. 
+Projeto semestral desenvolvido para a disciplina de **Desenvolvimento Web II** do Professor Thomas Marquez.
+
+Nomes:
+Gustavo Felicioni - Integração com Docker, Frontend, Hospedagem, Banco de Dados e APIs.
+Matheus Bedani - Backend, Lógica Geral, Debugging, Segurança e Funções Web.
 
 Trata-se de um sistema completo de gerenciamento de acervo bibliográfico, usuários e empréstimos, estruturado com front-end desacoplado em **React (SPA)**, API RESTful em **Laravel 11**, banco de dados **PostgreSQL** e integração externa com as APIs **Google Books** e **Open Library**.
 
