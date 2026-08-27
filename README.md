@@ -1,4 +1,4 @@
-# 📚 Sistema de Gestão de Biblioteca
+#  Sistema de Gestão de Biblioteca
 
 Projeto semestral desenvolvido para a disciplina de **Desenvolvimento Web II**. 
 
@@ -6,7 +6,7 @@ Trata-se de um sistema completo de gerenciamento de acervo bibliográfico, usuá
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 ### Front-end
 - **React (Vite)**
@@ -29,7 +29,7 @@ Trata-se de um sistema completo de gerenciamento de acervo bibliográfico, usuá
 
 ---
 
-## 🏛️ Modelagem de Dados (DER)
+##  Modelagem de Dados (DER)
 
 ```mermaid
 erDiagram
