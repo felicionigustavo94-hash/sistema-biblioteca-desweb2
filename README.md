@@ -3,6 +3,7 @@
 Projeto semestral desenvolvido para a disciplina de **Desenvolvimento Web II** do Professor Thomas Marquez.
 
 Nomes:
+
 Gustavo Felicioni - Integração com Docker, Frontend, Hospedagem, Banco de Dados e APIs.
 
 Matheus Bedani - Backend, Lógica Geral, Debugging, Segurança e Funções Web.
