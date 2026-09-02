@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Http;
 
 class BibliotecaController extends Controller
 {
-    // 1. LOGIN / REGISTRO / LOGOUT
+    // ==========================================
+    // 1. AUTENTICAÇÃO (LOGIN / REGISTRO / LOGOUT)
+    // ==========================================
+
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -57,7 +60,10 @@ class BibliotecaController extends Controller
         return response()->json(['message' => 'Desconectado com sucesso!']);
     }
 
-    // 2. LIVROS (LISTAR, CADASTRAR, EXCLUIR, BUSCAR ISBN)
+    // ==========================================
+    // 2. LIVROS (LISTAR, CADASTRAR, BUSCAR ISBN)
+    // ==========================================
+
     public function listarLivros(Request $request)
     {
         $query = Book::query();
@@ -72,8 +78,15 @@ class BibliotecaController extends Controller
         return response()->json($query->orderBy('id', 'desc')->get());
     }
 
+    // Apenas Administradores podem cadastrar livros
     public function cadastrarLivro(Request $request)
     {
+        $currentUser = $request->user();
+
+        if (!$currentUser || $currentUser->role !== 'admin') {
+            return response()->json(['message' => 'Acesso negado. Apenas administradores podem cadastrar novos livros.'], 403);
+        }
+
         $request->validate([
             'title' => 'required',
             'author' => 'required',
@@ -97,57 +110,112 @@ class BibliotecaController extends Controller
             'published_year' => $request->published_year,
         ]);
 
-        return response()->json(['message' => 'Livro cadastrado!', 'book' => $book], 201);
+        return response()->json(['message' => 'Livro cadastrado com sucesso!', 'book' => $book], 201);
     }
 
-    public function excluirLivro($id)
+    public function excluirLivro(Request $request, $id)
     {
+        $currentUser = $request->user();
+
+        if (!$currentUser || $currentUser->role !== 'admin') {
+            return response()->json(['message' => 'Apenas administradores podem excluir livros.'], 403);
+        }
+
         Book::findOrFail($id)->delete();
         return response()->json(['message' => 'Livro excluído com sucesso!']);
     }
 
-    // Busca dados por ISBN na API pública
+    // Busca robusta de dados por ISBN nas APIs públicas (BrasilAPI, OpenLibrary, GoogleBooks)
     public function buscarIsbn(Request $request)
     {
-        $isbn = preg_replace('/[^0-9X]/i', '', $request->isbn);
+        $isbn = preg_replace('/[^0-9X]/i', '', (string)$request->isbn);
 
-        if (!$isbn) {
-            return response()->json(['message' => 'ISBN inválido'], 400);
+        if (empty($isbn)) {
+            return response()->json(['message' => 'ISBN inválido ou não informado.'], 400);
         }
 
+        // 1. Tenta BrasilAPI (Excelente para ISBNs nacionais e internacionais com resposta rápida)
         try {
-            $res = Http::timeout(5)->get("https://www.googleapis.com/books/v1/volumes?q=isbn:$isbn");
-            if ($res->successful() && !empty($res->json('items'))) {
-                $info = $res->json('items.0.volumeInfo');
+            $resBrasil = Http::withoutVerifying()->timeout(6)->get("https://brasilapi.com.br/api/isbn/v1/{$isbn}");
+            if ($resBrasil->successful()) {
+                $data = $resBrasil->json();
+                $authors = !empty($data['authors']) ? implode(', ', $data['authors']) : '';
+                $subjects = !empty($data['subjects']) ? implode(', ', $data['subjects']) : ($data['genre'] ?? '');
+
+                return response()->json([
+                    'title' => $data['title'] ?? '',
+                    'author' => $authors,
+                    'genre' => $subjects,
+                    'synopsis' => $data['synopsis'] ?? '',
+                    'published_year' => isset($data['year']) ? (string)$data['year'] : '',
+                    'cover_path' => $data['cover_url'] ?? '',
+                    'source' => 'BrasilAPI',
+                ]);
+            }
+        } catch (\Throwable $e) {}
+
+        // 2. Tenta Open Library API (Internacional)
+        try {
+            $key = "ISBN:{$isbn}";
+            $resOpen = Http::withoutVerifying()->timeout(6)->get("https://openlibrary.org/api/books", [
+                'bibkeys' => $key,
+                'format' => 'json',
+                'jscmd' => 'data',
+            ]);
+
+            if ($resOpen->successful() && isset($resOpen->json()[$key])) {
+                $data = $resOpen->json()[$key];
+
+                $authors = [];
+                if (!empty($data['authors'])) {
+                    foreach ($data['authors'] as $a) {
+                        $authors[] = $a['name'];
+                    }
+                }
+
+                $cover = null;
+                if (!empty($data['cover']['large'])) {
+                    $cover = $data['cover']['large'];
+                } elseif (!empty($data['cover']['medium'])) {
+                    $cover = $data['cover']['medium'];
+                }
+
+                return response()->json([
+                    'title' => $data['title'] ?? '',
+                    'author' => implode(', ', $authors),
+                    'genre' => !empty($data['subjects']) ? $data['subjects'][0]['name'] : '',
+                    'synopsis' => is_string($data['notes'] ?? null) ? $data['notes'] : '',
+                    'published_year' => $data['publish_date'] ?? '',
+                    'cover_path' => $cover ?? '',
+                    'source' => 'Open Library',
+                ]);
+            }
+        } catch (\Throwable $e) {}
+
+        // 3. Tenta Google Books API
+        try {
+            $resGoogle = Http::withoutVerifying()->timeout(6)->get("https://www.googleapis.com/books/v1/volumes?q=isbn:{$isbn}");
+            if ($resGoogle->successful() && !empty($resGoogle->json('items'))) {
+                $info = $resGoogle->json('items.0.volumeInfo');
                 return response()->json([
                     'title' => $info['title'] ?? '',
                     'author' => isset($info['authors']) ? implode(', ', $info['authors']) : '',
                     'genre' => isset($info['categories']) ? implode(', ', $info['categories']) : '',
                     'synopsis' => $info['description'] ?? '',
                     'published_year' => isset($info['publishedDate']) ? substr($info['publishedDate'], 0, 4) : '',
-                    'cover_path' => $info['imageLinks']['thumbnail'] ?? '',
-                ]);
-            }
-
-            $resOpen = Http::timeout(5)->get("https://openlibrary.org/api/books?bibkeys=ISBN:$isbn&format=json&jscmd=data");
-            $key = "ISBN:$isbn";
-            if ($resOpen->successful() && isset($resOpen->json()[$key])) {
-                $data = $resOpen->json()[$key];
-                return response()->json([
-                    'title' => $data['title'] ?? '',
-                    'author' => isset($data['authors']) ? $data['authors'][0]['name'] : '',
-                    'genre' => isset($data['subjects']) ? $data['subjects'][0]['name'] : '',
-                    'synopsis' => is_string($data['notes'] ?? null) ? $data['notes'] : '',
-                    'published_year' => $data['publish_date'] ?? '',
-                    'cover_path' => $data['cover']['large'] ?? ($data['cover']['medium'] ?? ''),
+                    'cover_path' => $info['imageLinks']['thumbnail'] ?? ($info['imageLinks']['smallThumbnail'] ?? ''),
+                    'source' => 'Google Books',
                 ]);
             }
         } catch (\Throwable $e) {}
 
-        return response()->json(['message' => 'Livro não encontrado na API pública'], 404);
+        return response()->json(['message' => 'Nenhum livro encontrado para este ISBN nas APIs públicas.'], 404);
     }
 
+    // ==========================================
     // 3. EMPRÉSTIMOS E DEVOLUÇÕES
+    // ==========================================
+
     public function listarEmprestimos()
     {
         $loans = Loan::with(['book', 'user'])->orderBy('id', 'desc')->get();
@@ -159,7 +227,7 @@ class BibliotecaController extends Controller
         $book = Book::findOrFail($request->book_id);
 
         if ($book->available_copies <= 0) {
-            return response()->json(['message' => 'Nenhum exemplar disponível!'], 400);
+            return response()->json(['message' => 'Nenhum exemplar disponível no momento!'], 400);
         }
 
         $user = $request->user();
@@ -193,5 +261,44 @@ class BibliotecaController extends Controller
         $loan->book->increment('available_copies');
 
         return response()->json(['message' => 'Livro devolvido com sucesso!']);
+    }
+
+    // ==========================================
+    // 4. GERENCIAMENTO DE USUÁRIOS (ADMIN)
+    // ==========================================
+
+    public function listarUsuarios(Request $request)
+    {
+        $currentUser = $request->user();
+
+        if (!$currentUser || $currentUser->role !== 'admin') {
+            return response()->json(['message' => 'Acesso negado.'], 403);
+        }
+
+        $users = User::select('id', 'name', 'email', 'role', 'created_at')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json($users);
+    }
+
+    public function alternarRoleUsuario(Request $request, $id)
+    {
+        $currentUser = $request->user();
+
+        if (!$currentUser || $currentUser->role !== 'admin') {
+            return response()->json(['message' => 'Acesso negado.'], 403);
+        }
+
+        $targetUser = User::findOrFail($id);
+
+        // Inverte o perfil (se for admin vira leitor, se for leitor vira admin)
+        $novoRole = ($targetUser->role === 'admin') ? 'leitor' : 'admin';
+        $targetUser->update(['role' => $novoRole]);
+
+        return response()->json([
+            'message' => "Perfil de {$targetUser->name} alterado para {$novoRole}!",
+            'user' => $targetUser,
+        ]);
     }
 }

@@ -1,12 +1,12 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { BookOpen, PlusCircle, Repeat, LogIn, LogOut, Search, Sparkles, Trash2, CheckCircle, AlertTriangle } from 'lucide-react';
+import { BookOpen, PlusCircle, Repeat, LogIn, LogOut, Search, Sparkles, Trash2, CheckCircle, AlertTriangle, ShieldCheck, UserCheck, Users } from 'lucide-react';
 
 // Endereço da API Laravel (Local ou Nuvem)
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 export default function App() {
-  // Estado da Página Atual: 'catalogo', 'cadastrar', 'emprestimos', 'login'
+  // Estado da Página Atual: 'catalogo', 'cadastrar', 'emprestimos', 'usuarios', 'login'
   const [pagina, setPagina] = useState('catalogo');
 
   // Estado do Usuário Logado
@@ -18,9 +18,11 @@ export default function App() {
   // Estados dos Dados
   const [livros, setLivros] = useState([]);
   const [emprestimos, setEmprestimos] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [busca, setBusca] = useState('');
   const [mensagem, setMensagem] = useState(null);
   const [carregando, setCarregando] = useState(false);
+  const [buscandoIsbn, setBuscandoIsbn] = useState(false);
 
   // Estado do Formulário de Cadastro de Livro
   const [novoLivro, setNovoLivro] = useState({
@@ -69,12 +71,26 @@ export default function App() {
     }
   };
 
+  // 3. CARREGAR USUÁRIOS (ADMIN)
+  const carregarUsuarios = async () => {
+    if (user?.role !== 'admin') return;
+    try {
+      const res = await axios.get(`${API_URL}/users`, getHeaders());
+      setUsuarios(res.data || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     carregarLivros();
     carregarEmprestimos();
-  }, []);
+    if (user?.role === 'admin') {
+      carregarUsuarios();
+    }
+  }, [user]);
 
-  // 3. BUSCA MÁGICA POR ISBN NA API PÚBLICA (Google Books / Open Library)
+  // 4. BUSCA DE DADOS POR ISBN NA API PÚBLICA
   const buscarIsbn = async () => {
     if (!novoLivro.isbn) {
       alert('Digite o número do ISBN primeiro (Ex: 9788576082675)');
@@ -82,8 +98,10 @@ export default function App() {
     }
 
     try {
-      setMensagem({ tipo: 'sucesso', texto: 'Consultando API pública de livros...' });
-      const res = await axios.get(`${API_URL}/books/lookup/isbn?isbn=${novoLivro.isbn.trim()}`);
+      setBuscandoIsbn(true);
+      setMensagem(null);
+      const cleanIsbn = novoLivro.isbn.replace(/[^0-9X]/gi, '');
+      const res = await axios.get(`${API_URL}/books/lookup/isbn?isbn=${cleanIsbn}`);
       const dados = res.data;
 
       setNovoLivro((prev) => ({
@@ -96,27 +114,35 @@ export default function App() {
         cover_path: dados.cover_path || prev.cover_path,
       }));
 
-      setMensagem({ tipo: 'sucesso', texto: 'Dados preenchidos automaticamente via API pública!' });
+      setMensagem({ tipo: 'sucesso', texto: `Dados preenchidos via ${dados.source || 'API pública'}!` });
     } catch (e) {
-      setMensagem({ tipo: 'erro', texto: 'Livro não encontrado na API pública. Preencha manualmente os campos.' });
+      setMensagem({ tipo: 'erro', texto: 'Livro não encontrado para este ISBN nas APIs públicas. Preencha manualmente.' });
+    } finally {
+      setBuscandoIsbn(false);
     }
   };
 
-  // 4. SALVAR NOVO LIVRO
+  // 5. SALVAR NOVO LIVRO (APENAS ADMIN)
   const salvarLivro = async (e) => {
     e.preventDefault();
+
+    if (user?.role !== 'admin') {
+      setMensagem({ tipo: 'erro', texto: 'Apenas administradores podem cadastrar novos livros.' });
+      return;
+    }
+
     try {
       await axios.post(`${API_URL}/books`, novoLivro, getHeaders());
-      setMensagem({ tipo: 'sucesso', texto: 'Livro cadastrado com sucesso!' });
+      setMensagem({ tipo: 'sucesso', texto: 'Livro cadastrado com sucesso no acervo!' });
       setNovoLivro({ title: '', author: '', genre: '', isbn: '', synopsis: '', total_copies: 1, cover_path: '', published_year: '' });
       carregarLivros();
       setPagina('catalogo');
     } catch (e) {
-      setMensagem({ tipo: 'erro', texto: 'Erro ao salvar o livro.' });
+      setMensagem({ tipo: 'erro', texto: e.response?.data?.message || 'Erro ao salvar o livro.' });
     }
   };
 
-  // 5. FAZER EMPRÉSTIMO
+  // 6. FAZER EMPRÉSTIMO
   const fazerEmprestimo = async (bookId) => {
     if (!user) {
       setPagina('login');
@@ -133,11 +159,11 @@ export default function App() {
     }
   };
 
-  // 6. DEVOLVER LIVRO
+  // 7. DEVOLVER LIVRO
   const devolverLivro = async (loanId) => {
     try {
       await axios.post(`${API_URL}/loans/${loanId}/return`, {}, getHeaders());
-      setMensagem({ tipo: 'sucesso', texto: 'Livro devolvido com sucesso!' });
+      setMensagem({ tipo: 'sucesso', texto: 'Livro devolvido com sucesso ao acervo!' });
       carregarEmprestimos();
       carregarLivros(busca);
     } catch (e) {
@@ -145,7 +171,7 @@ export default function App() {
     }
   };
 
-  // 7. EXCLUIR LIVRO (ADMIN)
+  // 8. EXCLUIR LIVRO (ADMIN)
   const excluirLivro = async (id, titulo) => {
     if (!window.confirm(`Deseja excluir o livro "${titulo}"?`)) return;
     try {
@@ -157,7 +183,21 @@ export default function App() {
     }
   };
 
-  // 8. LOGIN / CADASTRO
+  // 9. ALTERAR PERMISSÃO DE USUÁRIO (TORNAR ADMIN / LEITOR)
+  const alternarRoleUsuario = async (userId, nomeAtual, roleAtual) => {
+    const novo = roleAtual === 'admin' ? 'leitor' : 'admin';
+    if (!window.confirm(`Deseja alterar a conta de "${nomeAtual}" para "${novo.toUpperCase()}"?`)) return;
+
+    try {
+      const res = await axios.put(`${API_URL}/users/${userId}/role`, {}, getHeaders());
+      setMensagem({ tipo: 'sucesso', texto: res.data.message || 'Permissão alterada com sucesso!' });
+      carregarUsuarios();
+    } catch (e) {
+      setMensagem({ tipo: 'erro', texto: 'Erro ao alterar permissão do usuário.' });
+    }
+  };
+
+  // 10. LOGIN / CADASTRO
   const submitLogin = async (e) => {
     e.preventDefault();
     try {
@@ -168,7 +208,7 @@ export default function App() {
       localStorage.setItem('biblioteca_token', token);
       localStorage.setItem('biblioteca_user', JSON.stringify(logado));
       setUser(logado);
-      setMensagem({ tipo: 'sucesso', texto: `Bem-vindo, ${logado.name}!` });
+      setMensagem({ tipo: 'sucesso', texto: `Bem-vindo, ${logado.name} (${logado.role})!` });
       setPagina('catalogo');
     } catch (e) {
       setMensagem({ tipo: 'erro', texto: 'Erro no login. Verifique os dados informados.' });
@@ -180,11 +220,12 @@ export default function App() {
     localStorage.removeItem('biblioteca_user');
     setUser(null);
     setMensagem({ tipo: 'sucesso', texto: 'Você saiu da sua conta.' });
+    setPagina('catalogo');
   };
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col font-sans">
-      {/* 🧭 BARRA DE NAVEGAÇÃO SIMPLES */}
+      {/* 🧭 BARRA DE NAVEGAÇÃO */}
       <nav className="bg-indigo-600 text-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xl font-bold">
@@ -204,7 +245,7 @@ export default function App() {
               onClick={() => setPagina('cadastrar')}
               className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${pagina === 'cadastrar' ? 'bg-indigo-800' : 'hover:bg-indigo-500'}`}
             >
-              ➕ Cadastrar Livro
+              ➕ Cadastrar Livro {user?.role === 'admin' ? '(Admin)' : ''}
             </button>
 
             <button
@@ -213,12 +254,22 @@ export default function App() {
             >
               🔄 Empréstimos
             </button>
+
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => { setPagina('usuarios'); carregarUsuarios(); }}
+                className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${pagina === 'usuarios' ? 'bg-indigo-800' : 'hover:bg-indigo-500'}`}
+              >
+                👥 Usuários & Permissões
+              </button>
+            )}
           </div>
 
           <div>
             {user ? (
               <div className="flex items-center gap-3">
-                <span className="text-xs bg-indigo-700 px-2.5 py-1 rounded-full font-medium">
+                <span className="text-xs bg-indigo-700 px-2.5 py-1 rounded-full font-medium flex items-center gap-1">
+                  {user.role === 'admin' ? <ShieldCheck className="w-3.5 h-3.5 text-amber-300" /> : <UserCheck className="w-3.5 h-3.5 text-emerald-300" />}
                   {user.name} ({user.role})
                 </span>
                 <button
@@ -288,12 +339,16 @@ export default function App() {
             ) : livros.length === 0 ? (
               <div className="bg-white p-8 rounded-xl text-center border border-slate-200 shadow-sm">
                 <p className="text-slate-500">Nenhum livro cadastrado no momento.</p>
-                <button
-                  onClick={() => setPagina('cadastrar')}
-                  className="mt-3 bg-indigo-600 text-white text-xs px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700"
-                >
-                  Cadastrar Primeiro Livro
-                </button>
+                {user?.role === 'admin' ? (
+                  <button
+                    onClick={() => setPagina('cadastrar')}
+                    className="mt-3 bg-indigo-600 text-white text-xs px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700"
+                  >
+                    Cadastrar Primeiro Livro
+                  </button>
+                ) : (
+                  <p className="text-xs text-slate-400 mt-2">Apenas administradores podem cadastrar novos livros.</p>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -355,7 +410,7 @@ export default function App() {
                           <button
                             onClick={() => excluirLivro(livro.id, livro.title)}
                             className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
-                            title="Excluir"
+                            title="Excluir Livro"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -370,124 +425,151 @@ export default function App() {
         )}
 
         {/* ===================================================== */}
-        {/* PÁGINA 2: CADASTRAR LIVRO */}
+        {/* PÁGINA 2: CADASTRAR LIVRO (APENAS ADMIN) */}
         {/* ===================================================== */}
         {pagina === 'cadastrar' && (
           <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-800 mb-1">Cadastrar Livro no Acervo</h2>
-            <p className="text-xs text-slate-500 mb-6">Você pode digitar o ISBN para buscar os dados na internet automaticamente</p>
-
-            {/* Caixa de Busca por ISBN */}
-            <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-xl mb-6">
-              <label className="block text-xs font-bold text-indigo-900 mb-1 flex items-center gap-1">
-                <Sparkles className="w-4 h-4 text-indigo-600" />
-                <span>Preencher Automaticamente por ISBN:</span>
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Ex: 9788576082675 ou 9788580571875"
-                  value={novoLivro.isbn}
-                  onChange={(e) => setNovoLivro({ ...novoLivro, isbn: e.target.value })}
-                  className="flex-1 px-3 py-2 text-sm bg-white border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+            {user?.role !== 'admin' ? (
+              <div className="text-center py-8">
+                <div className="inline-flex p-3 bg-rose-100 text-rose-600 rounded-xl mb-3">
+                  <ShieldCheck className="w-8 h-8" />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800 mb-2">Acesso Restrito a Administradores</h2>
+                <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
+                  Apenas usuários com perfil de <strong>Administrador</strong> têm permissão para cadastrar novos livros no acervo.
+                </p>
                 <button
-                  type="button"
-                  onClick={buscarIsbn}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer"
+                  onClick={() => setPagina('login')}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow"
                 >
-                  🔍 Buscar Dados
+                  Entrar como Administrador
                 </button>
               </div>
-            </div>
-
-            {/* Formulário Manual */}
-            <form onSubmit={salvarLivro} className="space-y-4">
+            ) : (
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Título do Livro *</label>
-                <input
-                  type="text"
-                  required
-                  value={novoLivro.title}
-                  onChange={(e) => setNovoLivro({ ...novoLivro, title: e.target.value })}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+                <h2 className="text-xl font-bold text-slate-800 mb-1">Cadastrar Livro no Acervo</h2>
+                <p className="text-xs text-slate-500 mb-6">Digite o ISBN para buscar os dados na internet automaticamente</p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Autor *</label>
-                  <input
-                    type="text"
-                    required
-                    value={novoLivro.author}
-                    onChange={(e) => setNovoLivro({ ...novoLivro, author: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  />
+                {/* Caixa de Busca por ISBN */}
+                <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-xl mb-6">
+                  <label className="block text-xs font-bold text-indigo-900 mb-1 flex items-center gap-1">
+                    <Sparkles className="w-4 h-4 text-indigo-600" />
+                    <span>Preencher Automaticamente por ISBN:</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ex: 9788576082675 ou 9788580571875"
+                      value={novoLivro.isbn}
+                      onChange={(e) => setNovoLivro({ ...novoLivro, isbn: e.target.value })}
+                      className="flex-1 px-3 py-2 text-sm bg-white border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={buscarIsbn}
+                      disabled={buscandoIsbn}
+                      className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer"
+                    >
+                      {buscandoIsbn ? 'Buscando...' : '🔍 Buscar Dados'}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-indigo-100 text-[11px] text-indigo-700">
+                    <span className="font-semibold">Testar ISBNs:</span>
+                    <button type="button" onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788576082675' })} className="underline hover:text-indigo-900">Código Limpo (9788576082675)</button> •
+                    <button type="button" onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788580571875' })} className="underline hover:text-indigo-900">Mochileiro das Galáxias (9788580571875)</button> •
+                    <button type="button" onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788535914849' })} className="underline hover:text-indigo-900">1984 (9788535914849)</button>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Gênero</label>
-                  <input
-                    type="text"
-                    value={novoLivro.genre}
-                    onChange={(e) => setNovoLivro({ ...novoLivro, genre: e.target.value })}
-                    placeholder="Ex: Informática, Ficção"
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
+                {/* Formulário Manual */}
+                <form onSubmit={salvarLivro} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Título do Livro *</label>
+                    <input
+                      type="text"
+                      required
+                      value={novoLivro.title}
+                      onChange={(e) => setNovoLivro({ ...novoLivro, title: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Quantidade de Cópias</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={novoLivro.total_copies}
-                    onChange={(e) => setNovoLivro({ ...novoLivro, total_copies: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Autor *</label>
+                      <input
+                        type="text"
+                        required
+                        value={novoLivro.author}
+                        onChange={(e) => setNovoLivro({ ...novoLivro, author: e.target.value })}
+                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">URL da Foto de Capa</label>
-                  <input
-                    type="text"
-                    value={novoLivro.cover_path}
-                    onChange={(e) => setNovoLivro({ ...novoLivro, cover_path: e.target.value })}
-                    placeholder="https://..."
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Gênero</label>
+                      <input
+                        type="text"
+                        value={novoLivro.genre}
+                        onChange={(e) => setNovoLivro({ ...novoLivro, genre: e.target.value })}
+                        placeholder="Ex: Informática, Ficção"
+                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+                  </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Sinopse</label>
-                <textarea
-                  rows="3"
-                  value={novoLivro.synopsis}
-                  onChange={(e) => setNovoLivro({ ...novoLivro, synopsis: e.target.value })}
-                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                ></textarea>
-              </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Quantidade de Cópias</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={novoLivro.total_copies}
+                        onChange={(e) => setNovoLivro({ ...novoLivro, total_copies: e.target.value })}
+                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setPagina('catalogo')}
-                  className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2 rounded-lg cursor-pointer shadow"
-                >
-                  Salvar Livro
-                </button>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">URL da Foto de Capa</label>
+                      <input
+                        type="text"
+                        value={novoLivro.cover_path}
+                        onChange={(e) => setNovoLivro({ ...novoLivro, cover_path: e.target.value })}
+                        placeholder="https://..."
+                        className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Sinopse</label>
+                    <textarea
+                      rows="3"
+                      value={novoLivro.synopsis}
+                      onChange={(e) => setNovoLivro({ ...novoLivro, synopsis: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    ></textarea>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => setPagina('catalogo')}
+                      className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2 rounded-lg cursor-pointer shadow"
+                    >
+                      Salvar Livro no Acervo
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
+            )}
           </div>
         )}
 
@@ -556,7 +638,61 @@ export default function App() {
         )}
 
         {/* ===================================================== */}
-        {/* PÁGINA 4: LOGIN / CADASTRO */}
+        {/* PÁGINA 4: GERENCIAR USUÁRIOS (APENAS ADMIN) */}
+        {/* ===================================================== */}
+        {pagina === 'usuarios' && user?.role === 'admin' && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h1 className="text-2xl font-bold text-slate-800">Gerenciamento de Usuários</h1>
+                <p className="text-xs text-slate-500">Promova leitores a Administradores ou ajuste permissões</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase">
+                  <tr>
+                    <th className="p-3.5">Nome</th>
+                    <th className="p-3.5">E-mail</th>
+                    <th className="p-3.5">Perfil Atual</th>
+                    <th className="p-3.5 text-right">Ação de Permissão</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {usuarios.map((u) => (
+                    <tr key={u.id} className="hover:bg-slate-50">
+                      <td className="p-3.5 font-semibold text-slate-900">{u.name}</td>
+                      <td className="p-3.5 text-slate-600">{u.email}</td>
+                      <td className="p-3.5">
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                          u.role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-700'
+                        }`}>
+                          {u.role === 'admin' ? '👑 Administrador' : '📖 Leitor'}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-right">
+                        <button
+                          onClick={() => alternarRoleUsuario(u.id, u.name, u.role)}
+                          className={`text-xs font-bold px-3 py-1.5 rounded-lg transition cursor-pointer shadow-sm ${
+                            u.role === 'admin'
+                              ? 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+                              : 'bg-amber-500 hover:bg-amber-600 text-white'
+                          }`}
+                        >
+                          {u.role === 'admin' ? 'Rebaixar para Leitor' : '⭐ Tornar Administrador'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ===================================================== */}
+        {/* PÁGINA 5: LOGIN / CADASTRO */}
         {/* ===================================================== */}
         {pagina === 'login' && (
           <div className="max-w-md mx-auto bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
@@ -620,7 +756,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* Contas de Demonstração */}
             {!isCadastro && (
               <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500">
                 <p className="font-semibold mb-2">💡 Contas de teste para demonstração:</p>
