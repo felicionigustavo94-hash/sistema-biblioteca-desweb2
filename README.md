@@ -1,4 +1,4 @@
-﻿# 📚 Sistema de Gestão de Biblioteca kkk
+﻿# 📚 Sistema de Gestão de Biblioteca kkkkkk
 > Trabalho Semestral da disciplina de **Desenvolvimento Web II** (Fatec).
 
 Sistema web simples, completo e funcional de gestão de biblioteca desenvolvido com **Laravel (Back-end API)**, **React (Front-end SPA)** e **PostgreSQL (Supabase / Local)**.
