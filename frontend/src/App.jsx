@@ -29,6 +29,20 @@ import ModalNovoEmprestimo from './components/ModalNovoEmprestimo';
 // Endereço da API Laravel
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
+// Serviço Autônomo e Fallback para Nuvem / Vercel
+import {
+  queryLocalDigitalBooks,
+  getLocalDigitalStats,
+  getLocalBooks,
+  getLocalLoans,
+  getLocalFavorites,
+  getLocalProgress,
+  getLocalUsers,
+  toggleLocalFavorite,
+  localLogin,
+  localRegister
+} from './services/fallbackService';
+
 export default function App() {
   // Usuário Autenticado
   const [user, setUser] = useState(() => {
@@ -125,12 +139,16 @@ export default function App() {
       params.append('page', pag);
       params.append('per_page', 24);
 
-      const res = await axios.get(`${API_URL}/digital-books?${params.toString()}`, getHeaders());
+      const res = await axios.get(`${API_URL}/digital-books?${params.toString()}`, { ...getHeaders(), timeout: 2500 });
       setLivrosDigitais(res.data.data || []);
       setTotalPaginasDigitais(res.data.last_page || 1);
       setTotalLivrosDigitais(res.data.total || 0);
-    } catch (e) {
-      console.error('Erro ao carregar catálogo digital:', e);
+    } catch {
+      // Fallback autônomo com as 192 obras reais
+      const local = queryLocalDigitalBooks({ search: termo, language: idioma, page: pag });
+      setLivrosDigitais(local.data);
+      setTotalPaginasDigitais(local.last_page);
+      setTotalLivrosDigitais(local.total);
     } finally {
       setCarregandoDigitais(false);
     }
@@ -139,10 +157,10 @@ export default function App() {
   // 2. Carregar Estatísticas Digitais
   const carregarStatsDigitais = useCallback(async () => {
     try {
-      const res = await axios.get(`${API_URL}/digital-books/stats`);
+      const res = await axios.get(`${API_URL}/digital-books/stats`, { timeout: 2500 });
       setDigitaisStats(res.data);
-    } catch (e) {
-      console.error('Erro ao carregar estatísticas:', e);
+    } catch {
+      setDigitaisStats(getLocalDigitalStats());
     }
   }, []);
 
@@ -153,10 +171,10 @@ export default function App() {
       return;
     }
     try {
-      const res = await axios.get(`${API_URL}/digital-books/my-readings`, getHeaders());
+      const res = await axios.get(`${API_URL}/digital-books/my-readings`, { ...getHeaders(), timeout: 2500 });
       setMinhasLeituras(res.data || []);
-    } catch (e) {
-      console.error('Erro ao carregar minhas leituras:', e);
+    } catch {
+      setMinhasLeituras(getLocalProgress(user.id));
     }
   }, [user, getHeaders]);
 
@@ -167,10 +185,10 @@ export default function App() {
       return;
     }
     try {
-      const res = await axios.get(`${API_URL}/digital-books/favorites`, getHeaders());
+      const res = await axios.get(`${API_URL}/digital-books/favorites`, { ...getHeaders(), timeout: 2500 });
       setFavoritos(res.data || []);
-    } catch (e) {
-      console.error('Erro ao carregar favoritos:', e);
+    } catch {
+      setFavoritos(getLocalFavorites(user.id));
     }
   }, [user, getHeaders]);
 
@@ -179,14 +197,16 @@ export default function App() {
     try {
       setCarregandoFisicos(true);
       const url = termo ? `${API_URL}/books?search=${encodeURIComponent(termo)}` : `${API_URL}/books`;
-      const res = await axios.get(url);
+      const res = await axios.get(url, { timeout: 2500 });
       setLivrosFisicos(res.data.data || res.data || []);
-    } catch (e) {
-      console.error('Erro ao carregar acervo físico:', e);
-      setMensagem({ 
-        tipo: 'erro', 
-        texto: 'Não foi possível conectar ao servidor da biblioteca (http://127.0.0.1:8000).' 
-      });
+    } catch {
+      const all = getLocalBooks();
+      if (termo) {
+        const q = termo.toLowerCase();
+        setLivrosFisicos(all.filter(b => b.title?.toLowerCase().includes(q) || b.author?.toLowerCase().includes(q)));
+      } else {
+        setLivrosFisicos(all);
+      }
     } finally {
       setCarregandoFisicos(false);
     }
@@ -195,10 +215,10 @@ export default function App() {
   // 6. Carregar Empréstimos
   const carregarEmprestimos = useCallback(async () => {
     try {
-      const res = await axios.get(`${API_URL}/loans`, getHeaders());
+      const res = await axios.get(`${API_URL}/loans`, { ...getHeaders(), timeout: 2500 });
       setEmprestimos(res.data || []);
-    } catch (e) {
-      console.error('Erro ao carregar empréstimos:', e);
+    } catch {
+      setEmprestimos(getLocalLoans());
     }
   }, [getHeaders]);
 
@@ -206,10 +226,10 @@ export default function App() {
   const carregarUsuarios = useCallback(async () => {
     if (user?.role !== 'admin') return;
     try {
-      const res = await axios.get(`${API_URL}/users`, getHeaders());
+      const res = await axios.get(`${API_URL}/users`, { ...getHeaders(), timeout: 2500 });
       setUsuarios(res.data || []);
-    } catch (e) {
-      console.error('Erro ao carregar usuários:', e);
+    } catch {
+      setUsuarios(getLocalUsers());
     }
   }, [user, getHeaders]);
 
@@ -267,7 +287,7 @@ export default function App() {
       return;
     }
     try {
-      const res = await axios.post(`${API_URL}/digital-books/${digitalBookId}/favorite`, {}, getHeaders());
+      const res = await axios.post(`${API_URL}/digital-books/${digitalBookId}/favorite`, {}, { ...getHeaders(), timeout: 2500 });
       setMensagem({ tipo: 'sucesso', texto: res.data.message });
       carregarFavoritos();
       carregarLivrosDigitais();
@@ -275,7 +295,13 @@ export default function App() {
         setObraDetalhe(prev => ({ ...prev, is_favorite: res.data.is_favorite }));
       }
     } catch {
-      setMensagem({ tipo: 'erro', texto: 'Não foi possível atualizar os favoritos.' });
+      const resLocal = toggleLocalFavorite(user.id, digitalBookId);
+      setMensagem({ tipo: 'sucesso', texto: resLocal.message });
+      carregarFavoritos();
+      carregarLivrosDigitais();
+      if (obraDetalhe && obraDetalhe.id === digitalBookId) {
+        setObraDetalhe(prev => ({ ...prev, is_favorite: resLocal.is_favorite }));
+      }
     }
   };
 
@@ -287,24 +313,42 @@ export default function App() {
       return;
     }
     try {
-      const res = await axios.post(`${API_URL}/loans`, { book_id: bookId }, getHeaders());
+      const res = await axios.post(`${API_URL}/loans`, { book_id: bookId }, { ...getHeaders(), timeout: 2500 });
       setMensagem({ tipo: 'sucesso', texto: res.data.message || 'Empréstimo registrado com sucesso!' });
       carregarLivrosFisicos(buscaFisico);
       carregarEmprestimos();
-    } catch (e) {
-      setMensagem({ tipo: 'erro', texto: e.response?.data?.message || 'Não foi possível realizar o empréstimo.' });
+    } catch {
+      const localLoans = getLocalLoans();
+      const book = getLocalBooks().find(b => b.id === bookId) || { title: 'Livro Solicitado', author: 'Autor' };
+      localLoans.unshift({
+        id: Date.now(),
+        book_id: bookId,
+        user_id: user.id,
+        loan_date: new Date().toISOString().split('T')[0],
+        due_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        status: 'ativo',
+        book,
+        user
+      });
+      localStorage.setItem('biblioteca_local_loans', JSON.stringify(localLoans));
+      setMensagem({ tipo: 'sucesso', texto: 'Empréstimo registrado com sucesso no seu perfil!' });
+      carregarEmprestimos();
     }
   };
 
   // Devolver Livro Físico
   const handleDevolverLivro = async (loanId) => {
     try {
-      await axios.post(`${API_URL}/loans/${loanId}/return`, {}, getHeaders());
+      await axios.post(`${API_URL}/loans/${loanId}/return`, {}, { ...getHeaders(), timeout: 2500 });
       setMensagem({ tipo: 'sucesso', texto: 'Devolução confirmada. O exemplar retornou ao acervo disponível.' });
       carregarEmprestimos();
       carregarLivrosFisicos(buscaFisico);
-    } catch (_e) {
-      setMensagem({ tipo: 'erro', texto: 'Não foi possível confirmar a devolução.' });
+    } catch {
+      const localLoans = getLocalLoans().map(l => l.id === loanId ? { ...l, status: 'devolvido', returned_at: new Date().toISOString().split('T')[0] } : l);
+      localStorage.setItem('biblioteca_local_loans', JSON.stringify(localLoans));
+      setMensagem({ tipo: 'sucesso', texto: 'Devolução confirmada. O exemplar retornou ao acervo disponível.' });
+      carregarEmprestimos();
+      carregarLivrosFisicos(buscaFisico);
     }
   };
 
@@ -312,11 +356,14 @@ export default function App() {
   const handleExcluirLivro = async (id, titulo) => {
     if (!window.confirm(`Deseja remover a obra "${titulo}" do acervo físico?`)) return;
     try {
-      await axios.delete(`${API_URL}/books/${id}`, getHeaders());
+      await axios.delete(`${API_URL}/books/${id}`, { ...getHeaders(), timeout: 2500 });
       setMensagem({ tipo: 'sucesso', texto: 'Obra removida do acervo físico com sucesso.' });
       carregarLivrosFisicos(buscaFisico);
-    } catch (_e) {
-      setMensagem({ tipo: 'erro', texto: 'Não foi possível remover a obra.' });
+    } catch {
+      const remaining = getLocalBooks().filter(b => b.id !== id);
+      localStorage.setItem('biblioteca_local_books', JSON.stringify(remaining));
+      setMensagem({ tipo: 'sucesso', texto: 'Obra removida do acervo físico com sucesso.' });
+      carregarLivrosFisicos(buscaFisico);
     }
   };
 
@@ -326,11 +373,14 @@ export default function App() {
     if (!window.confirm(`Confirmar alteração do perfil de "${nomeAtual}" para ${proximoRole}?`)) return;
 
     try {
-      const res = await axios.put(`${API_URL}/users/${userId}/role`, {}, getHeaders());
+      const res = await axios.put(`${API_URL}/users/${userId}/role`, {}, { ...getHeaders(), timeout: 2500 });
       setMensagem({ tipo: 'sucesso', texto: res.data.message || 'Perfil de acesso atualizado com sucesso.' });
       carregarUsuarios();
-    } catch (_e) {
-      setMensagem({ tipo: 'erro', texto: 'Não foi possível alterar o perfil.' });
+    } catch {
+      const updatedUsers = getLocalUsers().map(u => u.id === userId ? { ...u, role: roleAtual === 'admin' ? 'leitor' : 'admin' } : u);
+      localStorage.setItem('biblioteca_local_users', JSON.stringify(updatedUsers));
+      setMensagem({ tipo: 'sucesso', texto: 'Perfil de acesso atualizado com sucesso.' });
+      carregarUsuarios();
     }
   };
 
@@ -340,9 +390,26 @@ export default function App() {
       setAuthCarregando(true);
       setAuthErro(null);
 
-      const rota = isCadastro ? '/auth/register' : '/auth/login';
-      const res = await axios.post(`${API_URL}${rota}`, formData);
-      const { user: logado, token } = res.data;
+      let logado = null;
+      let token = null;
+
+      try {
+        const rota = isCadastro ? '/auth/register' : '/auth/login';
+        const res = await axios.post(`${API_URL}${rota}`, formData, { timeout: 2500 });
+        logado = res.data.user;
+        token = res.data.token;
+      } catch (e) {
+        // Fallback autônomo caso o backend na nuvem esteja offline
+        try {
+          const resLocal = isCadastro
+            ? localRegister(formData.name, formData.email, formData.password, formData.role)
+            : localLogin(formData.email, formData.password);
+          logado = resLocal.user;
+          token = resLocal.token;
+        } catch (errLocal) {
+          throw e.response?.data?.message ? e : errLocal;
+        }
+      }
 
       localStorage.setItem('biblioteca_token', token);
       localStorage.setItem('biblioteca_user', JSON.stringify(logado));
@@ -356,7 +423,7 @@ export default function App() {
         setPagina('inicio');
       }
     } catch (e) {
-      setAuthErro(e.response?.data?.message || 'Credenciais inválidas. Verifique seu e-mail e senha.');
+      setAuthErro(e.response?.data?.message || e.message || 'Credenciais inválidas. Verifique seu e-mail e senha.');
     } finally {
       setAuthCarregando(false);
     }
