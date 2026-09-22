@@ -239,18 +239,18 @@ export default function App() {
   const emprestimosAtivos = emprestimos.filter(e => e.status !== 'devolvido').length;
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] text-[#16241F] flex flex-col">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#182620] flex flex-col font-sans">
       
-      {/* 🏛️ NAVBAR LIMPA, LUMINOSA E COM ALTO CONTRASTE */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+      {/* 🏛️ BARRA SUPERIOR EDITORIAL E LUMINOSA */}
+      <header className="sticky top-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8E2D5] shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
           
-          {/* Logo Oficial com Símbolo Nítido e Tipografia Customizada (Syne) */}
+          {/* Logotipo Oficial BiblioGest */}
           <div 
             onClick={() => { setPagina('catalogo'); carregarLivros(busca); }}
             className="flex items-center gap-3 cursor-pointer group select-none"
           >
-            <div className="flex items-center justify-center h-10 w-16 group-hover:scale-105 transition-transform duration-300">
+            <div className="flex items-center justify-center h-11 w-16 group-hover:scale-105 transition-transform duration-300">
               <img 
                 src="/logo-symbol.png" 
                 alt="BiblioGest Ícone" 
@@ -259,24 +259,24 @@ export default function App() {
             </div>
             
             <div className="flex flex-col">
-              <div className="font-brand flex items-center text-2xl font-black tracking-tight leading-none">
-                <span className="text-[#0D4032]">Biblio</span>
-                <span className="text-[#C49B4B] ml-0.5">Gest</span>
+              <div className="font-brand flex items-center text-2xl font-bold tracking-tight leading-none text-[#0A3528]">
+                <span>Biblio</span>
+                <span className="text-[#C59B4C] ml-0.5 font-black">Gest</span>
               </div>
-              <span className="text-[9px] tracking-[0.22em] font-extrabold text-[#C49B4B] uppercase mt-1">
+              <span className="font-brand italic text-[11px] font-medium text-[#C59B4C] mt-0.5">
                 Conhecimento em boas mãos
               </span>
             </div>
           </div>
 
           {/* Abas de Navegação */}
-          <nav className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-semibold">
+          <nav className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-semibold">
             <button
               onClick={() => { setPagina('catalogo'); carregarLivros(busca); }}
               className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                 pagina === 'catalogo'
-                  ? 'bg-[#0D4032] text-white font-bold shadow-sm'
-                  : 'text-slate-600 hover:text-[#0D4032] hover:bg-slate-100/80'
+                  ? 'bg-[#0A3528] text-white font-bold shadow-sm'
+                  : 'text-slate-700 hover:text-[#0A3528] hover:bg-[#EFEAE1]'
               }`}
             >
               <BookOpen className="w-4 h-4" />
@@ -287,8 +287,8 @@ export default function App() {
               onClick={() => setPagina('cadastrar')}
               className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                 pagina === 'cadastrar'
-                  ? 'bg-[#0D4032] text-white font-bold shadow-sm'
-                  : 'text-slate-600 hover:text-[#0D4032] hover:bg-slate-100/80'
+                  ? 'bg-[#0A3528] text-white font-bold shadow-sm'
+                  : 'text-slate-700 hover:text-[#0A3528] hover:bg-[#EFEAE1]'
               }`}
             >
               <PlusCircle className="w-4 h-4" />
@@ -299,14 +299,14 @@ export default function App() {
               onClick={() => { setPagina('emprestimos'); carregarEmprestimos(); }}
               className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                 pagina === 'emprestimos'
-                  ? 'bg-[#0D4032] text-white font-bold shadow-sm'
-                  : 'text-slate-600 hover:text-[#0D4032] hover:bg-slate-100/80'
+                  ? 'bg-[#0A3528] text-white font-bold shadow-sm'
+                  : 'text-slate-700 hover:text-[#0A3528] hover:bg-[#EFEAE1]'
               }`}
             >
               <Repeat className="w-4 h-4" />
               <span>Empréstimos</span>
               {emprestimosAtivos > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-[#C49B4B] text-white font-extrabold">
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-[#C59B4C] text-white font-extrabold">
                   {emprestimosAtivos}
                 </span>
               )}
@@ -317,8 +317,8 @@ export default function App() {
                 onClick={() => { setPagina('usuarios'); carregarUsuarios(); }}
                 className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                   pagina === 'usuarios'
-                    ? 'bg-[#0D4032] text-white font-bold shadow-sm'
-                    : 'text-slate-600 hover:text-[#0D4032] hover:bg-slate-100/80'
+                    ? 'bg-[#0A3528] text-white font-bold shadow-sm'
+                    : 'text-slate-700 hover:text-[#0A3528] hover:bg-[#EFEAE1]'
                 }`}
               >
                 <Users className="w-4 h-4" />
@@ -327,18 +327,18 @@ export default function App() {
             )}
           </nav>
 
-          {/* Área de Autenticação / Perfil */}
+          {/* Área do Usuário / Login */}
           <div className="flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-2.5">
-                <div className="flex items-center gap-2 bg-[#0D4032]/5 border border-[#0D4032]/15 px-3.5 py-1.5 rounded-xl">
+                <div className="flex items-center gap-2 bg-white border border-[#E8E2D5] px-3.5 py-1.5 rounded-xl shadow-xs">
                   {user.role === 'admin' ? (
-                    <span className="flex items-center gap-1 text-[11px] font-extrabold text-[#A37E36] bg-[#C49B4B]/15 px-2 py-0.5 rounded-md border border-[#C49B4B]/30">
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#C49B4B]" />
+                    <span className="flex items-center gap-1 text-[11px] font-extrabold text-[#9A7426] bg-[#C59B4C]/15 px-2 py-0.5 rounded-md border border-[#C59B4C]/30">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#C59B4C]" />
                       Admin
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1 text-[11px] font-bold text-[#0D4032] bg-[#0D4032]/10 px-2 py-0.5 rounded-md">
+                    <span className="flex items-center gap-1 text-[11px] font-bold text-[#0A3528] bg-[#0A3528]/10 px-2 py-0.5 rounded-md">
                       <UserCheck className="w-3.5 h-3.5" />
                       Leitor
                     </span>
@@ -356,9 +356,9 @@ export default function App() {
             ) : (
               <button
                 onClick={() => setPagina('login')}
-                className="bg-[#0D4032] hover:bg-[#145C47] text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1.5 cursor-pointer"
+                className="bg-[#0A3528] hover:bg-[#125541] text-white font-bold text-xs sm:text-sm px-4.5 py-2 rounded-xl transition shadow-sm flex items-center gap-1.5 cursor-pointer"
               >
-                <LogIn className="w-4 h-4 text-[#C49B4B]" />
+                <LogIn className="w-4 h-4 text-[#C59B4C]" />
                 <span>Entrar</span>
               </button>
             )}
@@ -366,20 +366,20 @@ export default function App() {
         </div>
       </header>
 
-      {/* 🔔 BARRA DE AVISOS E MENSAGENS */}
+      {/* 🔔 BARRA DE MENSAGENS E ALERTAS */}
       {mensagem && (
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 mt-4">
-          <div className={`p-4 rounded-2xl flex items-center justify-between text-sm shadow-sm border ${
+          <div className={`p-4 rounded-2xl flex items-center justify-between text-sm shadow-xs border ${
             mensagem.tipo === 'sucesso'
-              ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
+              ? 'bg-emerald-50 text-emerald-950 border-emerald-200'
               : mensagem.tipo === 'aviso'
-              ? 'bg-amber-50 text-amber-900 border-amber-200'
-              : 'bg-rose-50 text-rose-900 border-rose-200'
+              ? 'bg-amber-50 text-amber-950 border-amber-200'
+              : 'bg-rose-50 text-rose-950 border-rose-200'
           }`}>
             <div className="flex items-center gap-3">
-              {mensagem.tipo === 'sucesso' && <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />}
-              {mensagem.tipo === 'aviso' && <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />}
-              {mensagem.tipo === 'erro' && <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0" />}
+              {mensagem.tipo === 'sucesso' && <CheckCircle className="w-5 h-5 text-emerald-700 flex-shrink-0" />}
+              {mensagem.tipo === 'aviso' && <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0" />}
+              {mensagem.tipo === 'erro' && <AlertTriangle className="w-5 h-5 text-rose-700 flex-shrink-0" />}
               <span className="font-semibold">{mensagem.texto}</span>
             </div>
             <button 
@@ -401,58 +401,58 @@ export default function App() {
         {pagina === 'catalogo' && (
           <div className="space-y-8">
             
-            {/* HERO BANNER EDITORIAL DE PRESTÍGIO DA MARCA */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#F4F8F6] via-[#FAF7F0] to-[#FFFFFF] border border-[#C49B4B]/30 p-6 sm:p-10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
+            {/* HERO BANNER EDITORIAL (COM TOQUE ARTESANAL DE LIVRARIA) */}
+            <div className="relative overflow-hidden rounded-3xl bg-[#F4EFE6] border border-[#E3DAC9] p-6 sm:p-10 shadow-xs flex flex-col md:flex-row items-center justify-between gap-8">
               
-              <div className="relative z-10 max-w-2xl space-y-3.5">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D4032]/10 border border-[#0D4032]/20 text-[#0D4032] text-xs font-extrabold uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5 text-[#C49B4B]" />
-                  Sistema de Gestão de Biblioteca
+              <div className="relative z-10 max-w-2xl space-y-4">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#DCD3C1] text-[#0A3528] text-xs font-bold tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-[#C59B4C]" />
+                  <span>Acervo e Curadoria Bibliotecária</span>
                 </div>
                 
-                <h1 className="font-brand text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#0D4032] leading-tight">
-                  Conhecimento em <span className="text-[#C49B4B]">boas mãos.</span>
+                <h1 className="font-brand text-3xl sm:text-5xl font-bold tracking-tight text-[#0A3528] leading-[1.12]">
+                  Conhecimento <span className="italic font-normal text-[#C59B4C]">em boas mãos.</span>
                 </h1>
                 
-                <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl font-normal">
-                  Explore o catálogo da BiblioGest com busca em tempo real, preenchimento automático de obras por ISBN e controle instantâneo de empréstimos.
+                <p className="text-base text-slate-600 leading-relaxed max-w-xl font-normal">
+                  Explore o acervo inteligente da <strong>BiblioGest</strong>. Pesquise obras, realize buscas automatizadas por ISBN e gerencie retiradas em tempo real.
                 </p>
 
                 {/* Métricas do Acervo */}
-                <div className="pt-2 flex flex-wrap gap-3 text-xs font-bold text-[#0D4032]">
-                  <div className="bg-white px-4 py-2.5 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
-                    <BookCheck className="w-4 h-4 text-[#C49B4B]" />
-                    <span><strong>{livros.length}</strong> Obras no Acervo</span>
+                <div className="pt-2 flex flex-wrap gap-3 text-xs font-semibold text-[#0A3528]">
+                  <div className="bg-white/90 px-4 py-2.5 rounded-xl border border-[#DCD3C1] shadow-2xs flex items-center gap-2">
+                    <BookCheck className="w-4 h-4 text-[#C59B4C]" />
+                    <span><strong>{livros.length}</strong> Obras Catalogadas</span>
                   </div>
-                  <div className="bg-white px-4 py-2.5 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
-                    <Bookmark className="w-4 h-4 text-emerald-600" />
+                  <div className="bg-white/90 px-4 py-2.5 rounded-xl border border-[#DCD3C1] shadow-2xs flex items-center gap-2">
+                    <Bookmark className="w-4 h-4 text-emerald-700" />
                     <span><strong>{totalDisponiveis}</strong> Exemplares Disponíveis</span>
                   </div>
-                  <div className="bg-white px-4 py-2.5 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
-                    <Repeat className="w-4 h-4 text-[#C49B4B]" />
+                  <div className="bg-white/90 px-4 py-2.5 rounded-xl border border-[#DCD3C1] shadow-2xs flex items-center gap-2">
+                    <Repeat className="w-4 h-4 text-[#C59B4C]" />
                     <span><strong>{emprestimosAtivos}</strong> Empréstimo(s) Ativo(s)</span>
                   </div>
                 </div>
               </div>
 
               {/* Destaque Visual da Marca no Banner */}
-              <div className="hidden md:flex flex-col items-center justify-center p-6 bg-white/90 rounded-2xl border border-[#C49B4B]/30 shadow-md flex-shrink-0 w-64 text-center">
+              <div className="hidden md:flex flex-col items-center justify-center p-6 bg-white rounded-2xl border border-[#DCD3C1] shadow-xs flex-shrink-0 w-64 text-center">
                 <img 
                   src="/logo-symbol.png" 
                   alt="BiblioGest" 
-                  className="w-28 h-auto object-contain mb-2 drop-shadow" 
+                  className="w-28 h-auto object-contain mb-3 drop-shadow" 
                 />
-                <span className="font-brand text-xl font-black text-[#0D4032] tracking-tight">
-                  Biblio<span className="text-[#C49B4B]">Gest</span>
+                <span className="font-brand text-2xl font-bold text-[#0A3528] tracking-tight">
+                  Biblio<span className="text-[#C59B4C] font-black">Gest</span>
                 </span>
-                <span className="text-[8px] tracking-[0.2em] font-extrabold text-[#C49B4B] uppercase mt-0.5">
-                  Fatec • DESWEB II
+                <span className="font-brand italic text-[11px] font-medium text-[#C59B4C] mt-0.5">
+                  Conhecimento em boas mãos
                 </span>
               </div>
             </div>
 
             {/* BARRA DE PESQUISA & FILTROS */}
-            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#E8E2D5] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="relative w-full md:w-96">
                 <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
@@ -463,7 +463,7 @@ export default function App() {
                     setBusca(e.target.value);
                     carregarLivros(e.target.value);
                   }}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0D4032] focus:bg-white transition"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0A3528] focus:bg-white transition"
                 />
               </div>
 
@@ -473,20 +473,20 @@ export default function App() {
                   onClick={() => setFiltroDisponivel(!filtroDisponivel)}
                   className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 font-bold cursor-pointer transition ${
                     filtroDisponivel
-                      ? 'bg-[#0D4032] text-white border-[#0D4032] shadow-sm'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      ? 'bg-[#0A3528] text-white border-[#0A3528] shadow-xs'
+                      : 'bg-white text-slate-700 border-[#E8E2D5] hover:bg-[#FAF7F2]'
                   }`}
                 >
-                  <Filter className="w-3.5 h-3.5 text-[#C49B4B]" />
+                  <Filter className="w-3.5 h-3.5 text-[#C59B4C]" />
                   <span>Apenas Disponíveis</span>
                 </button>
 
                 {user?.role === 'admin' && (
                   <button
                     onClick={() => setPagina('cadastrar')}
-                    className="bg-[#0D4032] hover:bg-[#145C47] text-white font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition cursor-pointer ml-auto"
+                    className="bg-[#0A3528] hover:bg-[#125541] text-white font-bold px-4.5 py-2.5 rounded-xl flex items-center gap-2 shadow-xs transition cursor-pointer ml-auto"
                   >
-                    <PlusCircle className="w-4 h-4 text-[#C49B4B]" />
+                    <PlusCircle className="w-4 h-4 text-[#C59B4C]" />
                     <span>Cadastrar Obra</span>
                   </button>
                 )}
@@ -495,23 +495,23 @@ export default function App() {
 
             {/* GRADE DE LIVROS */}
             {carregando ? (
-              <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                <div className="inline-block animate-spin rounded-full h-9 w-9 border-4 border-[#0D4032] border-t-transparent mb-3"></div>
-                <p className="text-sm text-slate-500 font-semibold">Consultando acervo da BiblioGest...</p>
+              <div className="text-center py-20 bg-white rounded-3xl border border-[#E8E2D5] shadow-xs">
+                <div className="inline-block animate-spin rounded-full h-9 w-9 border-4 border-[#0A3528] border-t-transparent mb-3"></div>
+                <p className="text-sm text-slate-500 font-semibold">Consultando catálogo da BiblioGest...</p>
               </div>
             ) : livrosFiltrados.length === 0 ? (
-              <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 shadow-sm space-y-3">
-                <div className="w-14 h-14 bg-[#0D4032]/10 text-[#0D4032] rounded-2xl flex items-center justify-center mx-auto mb-2">
+              <div className="bg-white p-12 rounded-3xl text-center border border-[#E8E2D5] shadow-xs space-y-3">
+                <div className="w-14 h-14 bg-[#0A3528]/10 text-[#0A3528] rounded-2xl flex items-center justify-center mx-auto mb-2">
                   <BookOpen className="w-7 h-7" />
                 </div>
-                <h3 className="font-brand text-lg font-bold text-slate-800">Nenhum livro localizado</h3>
+                <h3 className="font-brand text-xl font-bold text-slate-800">Nenhum livro localizado</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
                   {busca ? 'Nenhum resultado corresponde aos termos da pesquisa. Tente outras palavras-chave.' : 'O acervo ainda não possui obras cadastradas.'}
                 </p>
                 {user?.role === 'admin' && (
                   <button
                     onClick={() => setPagina('cadastrar')}
-                    className="mt-2 bg-[#0D4032] text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-[#145C47] cursor-pointer"
+                    className="mt-2 bg-[#0A3528] text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-[#125541] cursor-pointer"
                   >
                     Cadastrar Primeira Obra
                   </button>
@@ -525,11 +525,11 @@ export default function App() {
                   return (
                     <div 
                       key={livro.id} 
-                      className="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:border-[#C49B4B]/50 hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                      className="bg-white rounded-2xl border border-[#E8E2D5] shadow-xs hover:border-[#C59B4C]/60 hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                     >
                       <div>
                         {/* Moldura da Capa */}
-                        <div className="relative h-60 bg-slate-50 overflow-hidden flex items-center justify-center border-b border-slate-100 p-3">
+                        <div className="relative h-60 bg-[#FAF7F2] overflow-hidden flex items-center justify-center border-b border-[#E8E2D5]/80 p-3">
                           {livro.cover_url || livro.cover_path ? (
                             <img
                               src={livro.cover_url || livro.cover_path}
@@ -547,12 +547,12 @@ export default function App() {
                           )}
 
                           {/* Badge de Disponibilidade */}
-                          <span className={`absolute top-3 right-3 text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-sm ${
+                          <span className={`absolute top-3 right-3 text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-xs ${
                             disponivel
-                              ? 'bg-emerald-600 text-white'
-                              : 'bg-rose-600 text-white'
+                              ? 'bg-emerald-700 text-white'
+                              : 'bg-rose-700 text-white'
                           }`}>
-                            {disponivel ? `${livro.available_copies} disponível(is)` : 'Esgotado'}
+                            {disponivel ? `${livro.available_copies} em estoque` : 'Esgotado'}
                           </span>
 
                           {/* Botão de Exclusão (Admin) */}
@@ -570,7 +570,7 @@ export default function App() {
                         {/* Metadados da Obra */}
                         <div className="p-4 space-y-2">
                           {livro.genre && (
-                            <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#0D4032] bg-[#0D4032]/10 px-2.5 py-0.5 rounded-md">
+                            <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#0A3528] bg-[#0A3528]/10 px-2.5 py-0.5 rounded-md">
                               {livro.genre}
                             </span>
                           )}
@@ -579,7 +579,7 @@ export default function App() {
                             {livro.title}
                           </h3>
                           
-                          <p className="text-xs text-slate-600 font-semibold line-clamp-1">
+                          <p className="text-xs text-slate-600 font-medium line-clamp-1">
                             {livro.author}
                           </p>
 
@@ -597,18 +597,18 @@ export default function App() {
                         </div>
                       </div>
 
-                      {/* Botão de Empréstimo */}
+                      {/* Botão de Ação */}
                       <div className="p-4 pt-0">
                         <button
                           onClick={() => fazerEmprestimo(livro.id)}
                           disabled={!disponivel}
-                          className={`w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-sm ${
+                          className={`w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs ${
                             disponivel
-                              ? 'bg-[#0D4032] hover:bg-[#145C47] text-white active:scale-[0.98]'
+                              ? 'bg-[#0A3528] hover:bg-[#125541] text-white active:scale-[0.98]'
                               : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
                           }`}
                         >
-                          <BookCheck className="w-4 h-4 text-[#C49B4B]" />
+                          <BookCheck className="w-4 h-4 text-[#C59B4C]" />
                           <span>{disponivel ? 'Solicitar Empréstimo' : 'Indisponível no momento'}</span>
                         </button>
                       </div>
@@ -626,8 +626,8 @@ export default function App() {
         {pagina === 'cadastrar' && (
           <div className="max-w-2xl mx-auto">
             {user?.role !== 'admin' ? (
-              <div className="bg-white p-10 rounded-3xl border border-slate-200 text-center shadow-sm space-y-4">
-                <div className="w-16 h-16 bg-[#C49B4B]/15 text-[#C49B4B] rounded-2xl flex items-center justify-center mx-auto">
+              <div className="bg-white p-10 rounded-3xl border border-[#E8E2D5] text-center shadow-xs space-y-4">
+                <div className="w-16 h-16 bg-[#C59B4C]/15 text-[#C59B4C] rounded-2xl flex items-center justify-center mx-auto">
                   <ShieldCheck className="w-8 h-8" />
                 </div>
                 <h2 className="font-brand text-2xl font-bold text-slate-900">Acesso Restrito a Administradores</h2>
@@ -637,30 +637,30 @@ export default function App() {
                 <div className="pt-2">
                   <button
                     onClick={() => setPagina('login')}
-                    className="bg-[#0D4032] hover:bg-[#145C47] text-white text-xs font-bold px-6 py-3 rounded-xl transition cursor-pointer shadow-sm"
+                    className="bg-[#0A3528] hover:bg-[#125541] text-white text-xs font-bold px-6 py-3 rounded-xl transition cursor-pointer shadow-xs"
                   >
                     Fazer Login como Administrador
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+              <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E8E2D5] shadow-xs space-y-6">
                 
                 <div>
-                  <h2 className="font-brand text-2xl font-black text-[#0D4032] tracking-tight">Cadastrar Obra no Acervo</h2>
+                  <h2 className="font-brand text-2xl font-bold text-[#0A3528] tracking-tight">Cadastrar Obra no Acervo</h2>
                   <p className="text-xs text-slate-500 mt-1">
                     Preencha os dados da obra ou digite o ISBN para buscar automaticamente nas APIs públicas.
                   </p>
                 </div>
 
-                {/* PAINEL DE PREENCHIMENTO INTELIGENTE POR ISBN */}
-                <div className="rounded-2xl border border-[#C49B4B]/40 bg-gradient-to-r from-[#FDFBF7] to-[#FAF5E9] p-5 shadow-sm space-y-3">
+                {/* PAINEL DE PREENCHIMENTO POR ISBN */}
+                <div className="rounded-2xl border border-[#C59B4C]/40 bg-[#FAF5EB] p-5 shadow-2xs space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-[#0D4032] flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-[#C49B4B]" />
+                    <label className="text-xs font-bold text-[#0A3528] flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-[#C59B4C]" />
                       <span>Preenchimento Inteligente por ISBN</span>
                     </label>
-                    <span className="text-[10px] font-bold text-[#A37E36] uppercase bg-white px-2.5 py-0.5 rounded-full border border-[#C49B4B]/30">
+                    <span className="text-[10px] font-bold text-[#9A7426] uppercase bg-white px-2.5 py-0.5 rounded-full border border-[#C59B4C]/30">
                       BrasilAPI + Open Library
                     </span>
                   </div>
@@ -671,13 +671,13 @@ export default function App() {
                       placeholder="Ex: 9788576082675"
                       value={novoLivro.isbn}
                       onChange={(e) => setNovoLivro({ ...novoLivro, isbn: e.target.value })}
-                      className="flex-1 px-3.5 py-2.5 text-sm bg-white border border-[#C49B4B]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0D4032]"
+                      className="flex-1 px-3.5 py-2.5 text-sm bg-white border border-[#C59B4C]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A3528]"
                     />
                     <button
                       type="button"
                       onClick={buscarIsbn}
                       disabled={buscandoIsbn}
-                      className="bg-[#0D4032] hover:bg-[#145C47] disabled:bg-slate-400 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-2 shadow-sm"
+                      className="bg-[#0A3528] hover:bg-[#125541] disabled:bg-slate-400 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-2 shadow-xs"
                     >
                       {buscandoIsbn ? (
                         <>
@@ -686,20 +686,20 @@ export default function App() {
                         </>
                       ) : (
                         <>
-                          <Search className="w-3.5 h-3.5 text-[#C49B4B]" />
+                          <Search className="w-3.5 h-3.5 text-[#C59B4C]" />
                           <span>Buscar Dados</span>
                         </>
                       )}
                     </button>
                   </div>
 
-                  {/* Exemplos de Teste com 1 Clique */}
-                  <div className="pt-2 border-t border-[#C49B4B]/20 flex flex-wrap items-center gap-2 text-[11px]">
-                    <span className="font-bold text-[#0D4032]">Exemplos rápidos:</span>
+                  {/* Exemplos Rápidos */}
+                  <div className="pt-2 border-t border-[#C59B4C]/20 flex flex-wrap items-center gap-2 text-[11px]">
+                    <span className="font-bold text-[#0A3528]">Exemplos rápidos:</span>
                     <button
                       type="button"
                       onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788576082675' })}
-                      className="font-semibold text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
+                      className="font-semibold text-[#0A3528] underline hover:text-[#C59B4C] cursor-pointer"
                     >
                       Código Limpo
                     </button>
@@ -707,7 +707,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788580571875' })}
-                      className="font-semibold text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
+                      className="font-semibold text-[#0A3528] underline hover:text-[#C59B4C] cursor-pointer"
                     >
                       O Guia do Mochileiro
                     </button>
@@ -715,14 +715,14 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788535914849' })}
-                      className="font-semibold text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
+                      className="font-semibold text-[#0A3528] underline hover:text-[#C59B4C] cursor-pointer"
                     >
                       1984
                     </button>
                   </div>
                 </div>
 
-                {/* FORMULÁRIO PRINCIPAL */}
+                {/* FORMULÁRIO */}
                 <form onSubmit={salvarLivro} className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">Título da Obra *</label>
@@ -731,7 +731,7 @@ export default function App() {
                       required
                       value={novoLivro.title}
                       onChange={(e) => setNovoLivro({ ...novoLivro, title: e.target.value })}
-                      className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none"
+                      className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none"
                     />
                   </div>
 
@@ -743,7 +743,7 @@ export default function App() {
                         required
                         value={novoLivro.author}
                         onChange={(e) => setNovoLivro({ ...novoLivro, author: e.target.value })}
-                        className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none"
+                        className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none"
                       />
                     </div>
                     <div>
@@ -753,7 +753,7 @@ export default function App() {
                         value={novoLivro.genre}
                         onChange={(e) => setNovoLivro({ ...novoLivro, genre: e.target.value })}
                         placeholder="Ex: Engenharia de Software, Ficção"
-                        className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none"
+                        className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -766,7 +766,7 @@ export default function App() {
                         min="1"
                         value={novoLivro.total_copies}
                         onChange={(e) => setNovoLivro({ ...novoLivro, total_copies: e.target.value })}
-                        className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none"
+                        className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none"
                       />
                     </div>
                     <div>
@@ -776,7 +776,7 @@ export default function App() {
                         value={novoLivro.cover_path}
                         onChange={(e) => setNovoLivro({ ...novoLivro, cover_path: e.target.value })}
                         placeholder="https://..."
-                        className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none"
+                        className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -788,7 +788,7 @@ export default function App() {
                       value={novoLivro.synopsis}
                       onChange={(e) => setNovoLivro({ ...novoLivro, synopsis: e.target.value })}
                       placeholder="Breve resumo sobre a obra..."
-                      className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none"
+                      className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none"
                     ></textarea>
                   </div>
 
@@ -803,7 +803,7 @@ export default function App() {
                     </button>
                     <button
                       type="submit"
-                      className="bg-[#0D4032] hover:bg-[#145C47] text-white text-xs font-bold px-6 py-2.5 rounded-xl transition cursor-pointer shadow-sm"
+                      className="bg-[#0A3528] hover:bg-[#125541] text-white text-xs font-bold px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs"
                     >
                       Salvar Obra no Acervo
                     </button>
@@ -820,25 +820,25 @@ export default function App() {
         {pagina === 'emprestimos' && (
           <div className="space-y-6">
             <div>
-              <h1 className="font-brand text-2xl font-black text-[#0D4032] tracking-tight">Controle de Empréstimos</h1>
+              <h1 className="font-brand text-2xl font-bold text-[#0A3528] tracking-tight">Controle de Empréstimos</h1>
               <p className="text-xs text-slate-500 mt-1">
                 Acompanhamento em tempo real dos livros retirados, prazos de devolução e baixa de estoque.
               </p>
             </div>
 
             {emprestimos.length === 0 ? (
-              <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 shadow-sm space-y-2">
+              <div className="bg-white p-12 rounded-3xl text-center border border-[#E8E2D5] shadow-xs space-y-2">
                 <Repeat className="w-10 h-10 text-slate-300 mx-auto" />
-                <h3 className="font-brand text-base font-bold text-slate-800">Nenhum empréstimo ativo</h3>
+                <h3 className="font-brand text-lg font-bold text-slate-800">Nenhum empréstimo ativo</h3>
                 <p className="text-xs text-slate-500">
                   Os empréstimos solicitados através do acervo aparecerão listados aqui.
                 </p>
               </div>
             ) : (
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="bg-white rounded-3xl border border-[#E8E2D5] shadow-xs overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-600 text-xs uppercase font-extrabold tracking-wider">
+                    <thead className="bg-[#FAF7F2] border-b border-[#E8E2D5] text-slate-600 text-xs uppercase font-extrabold tracking-wider">
                       <tr>
                         <th className="p-4">Livro</th>
                         <th className="p-4">Leitor</th>
@@ -848,12 +848,12 @@ export default function App() {
                         <th className="p-4 text-right">Ação</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-[#E8E2D5]/70">
                       {emprestimos.map((emp) => {
                         const devolvido = emp.status === 'devolvido';
 
                         return (
-                          <tr key={emp.id} className="hover:bg-slate-50/60 transition">
+                          <tr key={emp.id} className="hover:bg-[#FAF7F2]/60 transition">
                             <td className="p-4 font-bold text-slate-900">
                               {emp.book?.title}
                             </td>
@@ -879,7 +879,7 @@ export default function App() {
                               {!devolvido ? (
                                 <button
                                   onClick={() => devolverLivro(emp.id)}
-                                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-xl transition cursor-pointer shadow-sm"
+                                  className="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-1.5 rounded-xl transition cursor-pointer shadow-xs"
                                 >
                                   Devolver Livro
                                 </button>
@@ -906,16 +906,16 @@ export default function App() {
         {pagina === 'usuarios' && user?.role === 'admin' && (
           <div className="space-y-6">
             <div>
-              <h1 className="font-brand text-2xl font-black text-[#0D4032] tracking-tight">Gestão de Usuários & Acessos</h1>
+              <h1 className="font-brand text-2xl font-bold text-[#0A3528] tracking-tight">Gestão de Usuários & Acessos</h1>
               <p className="text-xs text-slate-500 mt-1">
                 Controle de papéis e permissões no ecossistema BiblioGest.
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl border border-[#E8E2D5] shadow-xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-600 text-xs uppercase font-extrabold tracking-wider">
+                  <thead className="bg-[#FAF7F2] border-b border-[#E8E2D5] text-slate-600 text-xs uppercase font-extrabold tracking-wider">
                     <tr>
                       <th className="p-4">Nome do Usuário</th>
                       <th className="p-4">E-mail Cadastrado</th>
@@ -923,9 +923,9 @@ export default function App() {
                       <th className="p-4 text-right">Ação de Permissão</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-[#E8E2D5]/70">
                     {usuarios.map((u) => (
-                      <tr key={u.id} className="hover:bg-slate-50/60 transition">
+                      <tr key={u.id} className="hover:bg-[#FAF7F2]/60 transition">
                         <td className="p-4 font-bold text-slate-900">
                           {u.name}
                         </td>
@@ -935,7 +935,7 @@ export default function App() {
                         <td className="p-4">
                           <span className={`text-[11px] font-bold px-3 py-1 rounded-full ${
                             u.role === 'admin'
-                              ? 'bg-[#C49B4B]/20 text-[#0D4032] border border-[#C49B4B]/40'
+                              ? 'bg-[#C59B4C]/20 text-[#0A3528] border border-[#C59B4C]/40'
                               : 'bg-slate-100 text-slate-700'
                           }`}>
                             {u.role === 'admin' ? '👑 Administrador' : '📖 Leitor'}
@@ -944,10 +944,10 @@ export default function App() {
                         <td className="p-4 text-right">
                           <button
                             onClick={() => alternarRoleUsuario(u.id, u.name, u.role)}
-                            className={`text-xs font-bold px-3.5 py-1.5 rounded-xl transition cursor-pointer shadow-sm ${
+                            className={`text-xs font-bold px-3.5 py-1.5 rounded-xl transition cursor-pointer shadow-xs ${
                               u.role === 'admin'
                                 ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                                : 'bg-[#C49B4B] hover:bg-[#B38838] text-white'
+                                : 'bg-[#C59B4C] hover:bg-[#AF8436] text-white'
                             }`}
                           >
                             {u.role === 'admin' ? 'Rebaixar para Leitor' : 'Promover a Admin'}
@@ -967,7 +967,7 @@ export default function App() {
         {/* ===================================================== */}
         {pagina === 'login' && (
           <div className="max-w-md mx-auto my-4">
-            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-md space-y-6">
+            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-[#E8E2D5] shadow-sm space-y-6">
               
               {/* Logo Completa em Alta Resolução */}
               <div className="text-center space-y-3">
@@ -979,10 +979,10 @@ export default function App() {
                   />
                 </div>
                 <div>
-                  <h2 className="font-brand text-2xl font-black text-[#0D4032]">
-                    Biblio<span className="text-[#C49B4B]">Gest</span>
+                  <h2 className="font-brand text-2xl font-bold text-[#0A3528]">
+                    Biblio<span className="text-[#C59B4C] font-black">Gest</span>
                   </h2>
-                  <p className="text-xs text-slate-500 font-medium">
+                  <p className="font-brand italic text-xs text-slate-500 font-medium">
                     {isCadastro ? 'Cadastre sua conta de leitor' : 'Acesse o acervo inteligente'}
                   </p>
                 </div>
@@ -993,7 +993,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => alert('Integração com Google Auth pronta para vincular suas credenciais!')}
-                  className="w-full py-2.5 px-4 border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-2.5 transition cursor-pointer shadow-sm"
+                  className="w-full py-2.5 px-4 border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-2.5 transition cursor-pointer shadow-xs"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -1005,7 +1005,7 @@ export default function App() {
                 </button>
 
                 <div className="relative flex items-center justify-center">
-                  <div className="border-t border-slate-200 w-full"></div>
+                  <div className="border-t border-[#E8E2D5] w-full"></div>
                   <span className="bg-white px-3 text-[11px] text-slate-400 uppercase font-semibold">ou com e-mail</span>
                 </div>
               </div>
@@ -1020,7 +1020,7 @@ export default function App() {
                       required
                       value={loginForm.name}
                       onChange={(e) => setLoginForm({ ...loginForm, name: e.target.value })}
-                      className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none font-medium"
+                      className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none font-medium"
                     />
                   </div>
                 )}
@@ -1033,7 +1033,7 @@ export default function App() {
                     value={loginForm.email}
                     onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                     placeholder="admin@biblioteca.com"
-                    className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none font-medium"
                   />
                 </div>
 
@@ -1045,13 +1045,13 @@ export default function App() {
                     value={loginForm.password}
                     onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                     placeholder="password123"
-                    className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0D4032] focus:outline-none font-medium"
+                    className="w-full px-3.5 py-2.5 text-sm bg-[#FAF7F2] border border-[#E8E2D5] rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0A3528] focus:outline-none font-medium"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-[#0D4032] hover:bg-[#145C47] text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition cursor-pointer shadow-sm"
+                  className="w-full bg-[#0A3528] hover:bg-[#125541] text-white font-bold py-3 rounded-xl text-xs sm:text-sm transition cursor-pointer shadow-xs"
                 >
                   {isCadastro ? 'Criar Conta' : 'Acessar Conta'}
                 </button>
@@ -1061,22 +1061,22 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setIsCadastro(!isCadastro)}
-                  className="text-xs font-bold text-[#0D4032] hover:text-[#C49B4B] transition cursor-pointer"
+                  className="text-xs font-bold text-[#0A3528] hover:text-[#C59B4C] transition cursor-pointer"
                 >
                   {isCadastro ? 'Já possui cadastro? Fazer login' : 'Novo por aqui? Cadastre-se gratuitamente'}
                 </button>
               </div>
 
-              {/* Botões de Preenchimento para a Aula */}
+              {/* Botões de Preenchimento para Apresentação */}
               {!isCadastro && (
-                <div className="pt-4 border-t border-slate-100 text-xs space-y-2">
+                <div className="pt-4 border-t border-[#E8E2D5] text-xs space-y-2">
                   <p className="font-bold text-slate-700 text-[11px] uppercase tracking-wider">
                     Acesso Rápido para Apresentação:
                   </p>
                   <button
                     type="button"
                     onClick={() => setLoginForm({ ...loginForm, email: 'admin@biblioteca.com', password: 'password123' })}
-                    className="w-full text-left bg-slate-50 hover:bg-[#C49B4B]/10 border border-slate-200 hover:border-[#C49B4B]/40 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between"
+                    className="w-full text-left bg-[#FAF7F2] hover:bg-[#C59B4C]/10 border border-[#E8E2D5] hover:border-[#C59B4C]/40 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between"
                   >
                     <span>👑 <strong>Admin:</strong> admin@biblioteca.com</span>
                     <span className="text-[10px] text-slate-400 font-bold">Preencher</span>
@@ -1084,7 +1084,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setLoginForm({ ...loginForm, email: 'leitor@biblioteca.com', password: 'password123' })}
-                    className="w-full text-left bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between"
+                    className="w-full text-left bg-[#FAF7F2] hover:bg-emerald-50 border border-[#E8E2D5] hover:border-emerald-300 p-2.5 rounded-xl transition cursor-pointer flex items-center justify-between"
                   >
                     <span>📖 <strong>Leitor:</strong> leitor@biblioteca.com</span>
                     <span className="text-[10px] text-slate-400 font-bold">Preencher</span>
@@ -1096,17 +1096,17 @@ export default function App() {
         )}
       </main>
 
-      {/* 🦶 RODAPÉ DA MARCA BIBLIOGEST */}
-      <footer className="bg-white border-t border-slate-200 py-6 text-slate-500 text-xs">
+      {/* 🦶 RODAPÉ EDITORIAL DA MARCA BIBLIOGEST */}
+      <footer className="bg-white border-t border-[#E8E2D5] py-6 text-slate-500 text-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img src="/logo-symbol.png" alt="BiblioGest" className="w-8 h-auto object-contain" />
             <div className="flex items-center gap-2">
-              <span className="font-brand font-black text-sm text-[#0D4032]">
-                Biblio<span className="text-[#C49B4B]">Gest</span>
+              <span className="font-brand font-bold text-base text-[#0A3528]">
+                Biblio<span className="text-[#C59B4C] font-black">Gest</span>
               </span>
               <span className="text-slate-300">•</span>
-              <span className="font-semibold text-slate-500 text-xs">Conhecimento em boas mãos</span>
+              <span className="font-brand italic text-slate-500 text-xs">Conhecimento em boas mãos</span>
             </div>
           </div>
           <div className="text-center sm:text-right text-[11px] text-slate-400 font-medium">
