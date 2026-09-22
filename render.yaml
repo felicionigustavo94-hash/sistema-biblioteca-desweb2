@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: bibliogest-api
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: ohio
+    envVars:
+      - key: APP_NAME
+        value: "BiblioGest API"
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: base64:7B5L3GvH5P7/0n1zC1k0Jj5ZpW5u8Q7gX9y2a4B6c8D=
+      - key: APP_DEBUG
+        value: "false"
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /var/www/html/database/database.sqlite
+      - key: SESSION_DRIVER
+        value: file
+      - key: FILESYSTEM_DISK
+        value: public

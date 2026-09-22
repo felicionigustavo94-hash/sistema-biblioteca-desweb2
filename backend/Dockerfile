@@ -1,9 +1,11 @@
 FROM php:8.3-apache
 
-# Install system dependencies & PostgreSQL dev libraries
+# Install system dependencies & dev libraries
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
+    libsqlite3-dev \
+    sqlite3 \
     zip \
     unzip \
     git \
@@ -12,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     pdo \
     pdo_pgsql \
     pgsql \
+    pdo_sqlite \
     zip \
     fileinfo \
     bcmath \
