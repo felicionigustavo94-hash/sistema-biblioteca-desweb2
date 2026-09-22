@@ -23,8 +23,16 @@ export default function LeitorHome({
   // Obra mais recente em andamento (Continuar Lendo)
   const leituraRecente = minhasLeituras && minhasLeituras.length > 0 ? minhasLeituras[0] : null;
 
-  // Destaques em Língua Portuguesa
-  const livrosPortugues = livrosDigitais.filter(b => b.language === 'pt').slice(0, 8);
+  // Destaques em Língua Portuguesa (priorizar grandes romances e clássicos literários)
+  const priorityIds = ['55752', '54829', '3333', '40409', '48316', '62383', '23145', '24919', '26110'];
+  const livrosPortugues = [...livrosDigitais.filter(b => b.language === 'pt')].sort((a, b) => {
+    const aP = priorityIds.indexOf(String(a.external_id || a.id));
+    const bP = priorityIds.indexOf(String(b.external_id || b.id));
+    if (aP !== -1 && bP !== -1) return aP - bP;
+    if (aP !== -1) return -1;
+    if (bP !== -1) return 1;
+    return b.download_count - a.download_count;
+  }).slice(0, 8);
   
   // Mais populares
   const livrosPopulares = [...livrosDigitais].sort((a, b) => b.download_count - a.download_count).slice(0, 6);
@@ -171,7 +179,7 @@ export default function LeitorHome({
           {livrosPortugues.map((livro) => (
             <div
               key={livro.id}
-              onClick={() => onAbrirDetalhes(livro)}
+              onClick={() => onLerAgora(livro)}
               className="bg-[#FFFFFF] border border-[#D5DED7] hover:border-[#1D5E51] rounded-[8px] p-3.5 flex flex-col justify-between transition-all hover:shadow-md cursor-pointer group"
             >
               <div className="space-y-3">
@@ -201,14 +209,30 @@ export default function LeitorHome({
                 </div>
               </div>
 
-              {/* Badges e Ação */}
-              <div className="mt-3 pt-3 border-t border-[#D5DED7]/60 flex items-center justify-between">
-                <span className="text-[0.6875rem] font-semibold text-[#216044] bg-[#EAF4ED] px-2 py-0.5 rounded-full">
-                  Ler agora
-                </span>
-                <span className="text-[0.6875rem] text-[#5C6D65] numeric">
-                  PT
-                </span>
+              {/* Botões de Ação Direta */}
+              <div className="mt-3 pt-3 border-t border-[#D5DED7]/60 flex items-center justify-between gap-1.5">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onLerAgora(livro);
+                  }}
+                  className="flex-1 h-8 px-2.5 bg-[#1D5E51] hover:bg-[#154B41] text-white text-xs font-semibold rounded-[5px] flex items-center justify-center gap-1.5 shadow-xs transition-colors"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-[#C6A15B]" />
+                  <span>Ler Agora</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAbrirDetalhes(livro);
+                  }}
+                  className="h-8 px-2 text-[0.6875rem] font-medium text-[#5C6D65] hover:text-[#203B34] hover:bg-[#F0F2ED] rounded-[5px] transition-colors border border-transparent hover:border-[#D5DED7]"
+                  title="Ver sinopse e ficha catalográfica"
+                >
+                  Ficha
+                </button>
               </div>
             </div>
           ))}

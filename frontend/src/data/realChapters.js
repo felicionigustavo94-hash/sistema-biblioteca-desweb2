@@ -428,8 +428,7 @@ export function getBookRealContent(book) {
       {
         title: isPt ? 'Capítulo I — Abertura da Obra' : 'Chapter I — Opening',
         content: `
-<p class="lead"><strong>${title}</strong></p>
-<p><em>${isPt ? `Edição de leitura integral preservada no acervo do BiblioGest. Texto por ${author}.` : `Complete reading edition catalogued by BiblioGest. Text by ${author}.`}</em></p>
+<p class="lead"><em>${title} — Por ${author}</em></p>
 <p>${isPt 
   ? `Era uma manhã límpida quando os primeiros acontecimentos desta narrativa começaram a se desenhar. Naqueles dias em que os costumes guardavam um ritmo mais solene, cada gesto e cada palavra possuíam um peso que os tempos modernos raramente testemunham.`
   : `It was a crisp clear morning when the earliest events of this narrative began to take shape. In those days when society maintained a more deliberate pace, every word and glance carried an importance seldom felt today.`}</p>
@@ -461,8 +460,8 @@ export function getBookRealContent(book) {
   ? `A verdade, outrora velada por aparências e equívocos, impôs-se com a clareza irrecusável que apenas o passar do tempo é capaz de conferir às experiências humanas. Na varanda debruçada sobre o horizonte, contemplando o cair da tarde, ficou evidente que cada obstáculo percorrido tinha sua razão de ser na formação daquele caráter.`
   : `Truth, once obscured by misunderstandings and pretense, asserted itself with the clarity that only reflection can bestow. Looking out toward the evening horizon, it became evident that every hardship endured had served its purpose in forging their resolution.`}</p>
 <p>${isPt 
-  ? `No leitor digital do BiblioGest, sua leitura fica registrada automaticamente, permitindo continuar esta e outras obras do acervo em qualquer dispositivo.`
-  : `In the BiblioGest reader, your reading progress is automatically saved, allowing you to resume your books across all devices.`}</p>
+  ? `Fechava-se assim um ciclo memorável, deixando nos corações daqueles que acompanharam a trajetória a certeza de que as grandes paixões e convicções jamais se apagam com o vento.`
+  : `Thus concluded a memorable journey, leaving in the hearts of those who witnessed it the certainty that genuine devotion and steadfast resolve are never lost to time.`}</p>
 `
       }
     ]

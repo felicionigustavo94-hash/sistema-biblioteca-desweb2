@@ -152,7 +152,7 @@ export default function LeitorCatalogo({
           {livrosDigitais.map((livro) => (
             <div
               key={livro.id}
-              onClick={() => onAbrirDetalhes(livro)}
+              onClick={() => onLerAgora(livro)}
               className="bg-[#FFFFFF] border border-[#D5DED7] hover:border-[#1D5E51] rounded-[8px] p-3 flex flex-col justify-between transition-all hover:shadow-md cursor-pointer group"
             >
               <div className="space-y-2.5">
@@ -182,14 +182,30 @@ export default function LeitorCatalogo({
                 </div>
               </div>
 
-              {/* Badges de Disponibilidade */}
-              <div className="mt-3 pt-2.5 border-t border-[#D5DED7]/60 flex items-center justify-between">
-                <span className="text-[0.625rem] font-semibold text-[#216044] bg-[#EAF4ED] px-1.5 py-0.5 rounded">
-                  Ler agora
-                </span>
-                <span className="text-[0.625rem] font-semibold uppercase text-[#5C6D65] numeric">
-                  {livro.language}
-                </span>
+              {/* Ações Rápidas: Ler Agora e Ficha */}
+              <div className="mt-3 pt-2 border-t border-[#D5DED7]/60 flex items-center justify-between gap-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onLerAgora(livro);
+                  }}
+                  className="flex-1 h-7 px-2 bg-[#1D5E51] hover:bg-[#154B41] text-white text-[0.6875rem] font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-colors"
+                >
+                  <BookOpen className="w-3 h-3 text-[#C6A15B]" />
+                  <span>Ler</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAbrirDetalhes(livro);
+                  }}
+                  className="h-7 px-1.5 text-[0.625rem] text-[#5C6D65] hover:text-[#203B34] hover:bg-[#F0F2ED] rounded-[4px] transition-colors"
+                  title="Ver sinopse e detalhes"
+                >
+                  Ficha
+                </button>
               </div>
             </div>
           ))}

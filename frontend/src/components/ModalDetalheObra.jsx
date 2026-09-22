@@ -104,6 +104,21 @@ export default function ModalDetalheObra({
                 </span>
               </div>
 
+              {/* Botão de Destaque para Leitura Imediata */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onLerAgora(obra);
+                  }}
+                  className="w-full sm:w-auto h-12 px-6 bg-[#1D5E51] hover:bg-[#154B41] text-white text-sm font-semibold rounded-[6px] flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <BookOpen className="w-5 h-5 text-[#C6A15B]" />
+                  <span>{progressPercent > 0 ? 'Continuar Lendo Obra' : 'Abrir Livro e Ler Agora (Páginas Reais)'}</span>
+                </button>
+              </div>
+
               {/* Barra de Progresso se houver leitura prévia */}
               {progressPercent > 0 && (
                 <div className="p-3 bg-[#EFF6F2] border border-[#DCEDE6] rounded-[6px] space-y-1.5">
