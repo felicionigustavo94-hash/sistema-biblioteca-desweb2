@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   BiblioGest — Tokens de Implementação (design.md · Seção 15)
+   BiblioGest — Tokens de Implementação (design.md · Seção 15 e 19)
    ========================================================================== */
 
 :root {
   color-scheme: light;
   
-  /* Cores de Marca */
+  /* Cores de Marca Institucional */
   --bg-brand-950: #072a24;
   --bg-brand-900: #0a372f;
   --bg-brand-800: #154b41;
@@ -21,9 +21,10 @@
   --bg-gold-100: #f3e8cd;
 
   /* Superfícies e Canvas */
-  --bg-canvas: #f7f6f1;
+  --bg-canvas: #eff6f2; /* Verde muito suave de suporte conforme Seção 19.1 */
   --bg-surface: #ffffff;
   --bg-surface-subtle: #f0f2ed;
+  --bg-paper: #f7f6f1;
   --bg-text: #203b34;
   --bg-text-muted: #5c6d65;
   --bg-border: #d5ded7;
@@ -36,7 +37,7 @@
   --bg-on-action: #ffffff;
   --bg-selected: var(--bg-brand-100);
   --bg-focus: var(--bg-brand-700);
-  --bg-focus-on-dark: #f3e8cd;
+  --bg-focus-on-dark: #c6a15b;
 
   /* Cores Semânticas de Circulação */
   --bg-success: #216044;
@@ -71,7 +72,7 @@
   --bg-radius-panel: 8px;
   --bg-radius-dialog: 12px;
   --bg-control-height: 44px;
-  --bg-sidebar-width: 232px;
+  --bg-sidebar-width: 240px;
   --bg-header-height: 64px;
   
   /* Elevação */
@@ -81,6 +82,14 @@
   /* Movimento */
   --bg-duration-fast: 140ms;
   --bg-duration-panel: 200ms;
+
+  /* Temas do Leitor de E-books (Seção 19.4) */
+  --reader-bg-paper: #f7f6f1;
+  --reader-text-paper: #203b34;
+  --reader-bg-sepia: #fbf0d9;
+  --reader-text-sepia: #5f4b32;
+  --reader-bg-dark: #16221d;
+  --reader-text-dark: #d5ded7;
 }
 
 body {
@@ -104,7 +113,7 @@ body {
   --bg-focus: var(--bg-focus-on-dark);
 }
 
-/* Tipografia Editorial Lora (reservada a chamadas e entradas) */
+/* Tipografia Editorial Lora */
 .font-editorial {
   font-family: var(--bg-font-editorial);
 }
@@ -122,11 +131,11 @@ button, input, select, textarea, a {
               box-shadow var(--bg-duration-fast) ease;
 }
 
-/* Motivo Exclusivo: Marcador de Página Ativo */
-.nav-bookmark-active {
-  border-left: 3px solid var(--bg-brand-700);
-  background-color: var(--bg-brand-50);
-  color: var(--bg-brand-900);
+/* Marcador de Página no Fundo Verde Profundo (design.md Seção 19.1) */
+.nav-dark-active {
+  border-left: 3px solid #c6a15b;
+  background-color: #1d5e51;
+  color: #ffffff;
   font-weight: 600;
 }
 

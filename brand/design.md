@@ -575,3 +575,43 @@ Na implementação, começar por tokens, tipografia e estrutura; seguir por camp
 As próximas decisões de produto são: perfis de acesso, regras de prazo e renovação, existência de reservas, forma de identificação dos exemplares e eventual suporte a múltiplas unidades. Essas decisões não precisam mudar a identidade proposta, mas devem determinar os controles e estados exibidos.
 
 **Critério final:** uma tela deve parecer parte do BiblioGest e permitir ao operador compreender o acervo, identificar a pessoa certa e concluir a circulação de um livro com segurança e clareza.
+
+## 19. Extensões da Versão 1.1 — Biblioteca Digital, Presença Verde e Perfis
+
+Esta seção documenta formalmente as extensões autorizadas para a evolução do BiblioGest:
+
+### 19.1 Presença Reforçada do Verde Institucional
+- **Navegação Lateral**: Adota fundo em verde profundo `brand.900` (`#0A372F`), conferindo solidez institucional.
+- **Tipografia e Ícones da Navegação**: Texto em `--bg-brand-100` (`#DCEDE6`) e branco, garantindo contraste superior a 7:1.
+- **Marcador de Página Adaptado ao Fundo Escuro**: Filete vertical dourado `gold.500` (`#C6A15B`) de 3px, fundo em verde principal `brand.700` (`#1D5E51`) e texto branco seminegrito.
+- **Fundo Geral da Aplicação (Canvas)**: Verde muito suave `brand.50` (`#EFF6F2`), reduzindo o ofuscamento e integrando a marca ao ambiente.
+- **Áreas de Trabalho**: Painéis em branco (`#FFFFFF`) e canvas papel (`#F7F6F1`).
+
+### 19.2 Autenticação Independente
+- Página de login isolada de barras laterais administrativas ou cabeçalhos de sistema.
+- Fundo predominante em verde profundo `#0A372F` com presença editorial em Lora ("Conhecimento em circulação.").
+- Formulário com labels persistentes, alternância de visibilidade de senha e feedback acessível.
+- Papéis e permissões derivados estritamente do servidor e da conta autenticada.
+
+### 19.3 Separação de Experiências (Leitor vs Operador)
+- **Experiência do Leitor**:
+  - *Início*: Busca de acervo, continuidade de leitura ("Continuar lendo"), estantes temáticas e prazos de empréstimos pessoais.
+  - *Explorar Livros*: Grade de capas sem cortes com indicação de disponibilidade física e digital.
+  - *Minha Leitura*: Acompanhamento de progresso de leitura real e favoritos.
+  - *Meus Empréstimos*: Situação e vencimento dos exemplares físicos sob posse do leitor.
+- **Experiência do Operador**:
+  - *Visão Geral*: Painel operacional de circulação e métricas.
+  - *Acervo Físico*: Gestão de obras e exemplares físicos.
+  - *Catálogo Digital*: Gestão e consulta do acervo de e-books indexados.
+  - *Empréstimos*: Circulação geral e devoluções.
+  - *Leitores e Operadores*: Administração de contas e perfis de acesso.
+
+### 19.4 Leitor de E-books e Temas de Leitura
+- Experiência imersiva livre de distrações com navegação por capítulos.
+- Temas de leitura dedicados:
+  - *Claro (Papel)*: Fundo `#F7F6F1`, texto `#203B34`.
+  - *Sépia*: Fundo `#FBF0D9`, texto `#5F4B32`.
+  - *Escuro*: Fundo `#1A2521`, texto `#D5DED7`.
+- Ajustes de tamanho de fonte, entrelinha e largura do bloco de leitura.
+- Persistência de localização estável por capítulo e percentual associados ao leitor autenticado.
+
