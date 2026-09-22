@@ -6,7 +6,6 @@ import {
   Clock, 
   Star, 
   Globe, 
-  Sparkles,
   BookmarkCheck,
   CheckCircle2
 } from 'lucide-react';
@@ -41,11 +40,6 @@ export default function LeitorHome({
         <div className="absolute top-0 right-0 w-80 h-80 bg-[#C6A15B]/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="max-w-2xl relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D5E51] text-[#C6A15B] text-xs font-semibold border border-[#C6A15B]/30">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Biblioteca Digital BiblioGest · Acervo em Domínio Público</span>
-          </div>
-
           <h2 className="font-editorial text-2xl sm:text-4xl font-medium text-white leading-tight">
             Descubra, consulte e leia centenas de clássicos livremente.
           </h2>
