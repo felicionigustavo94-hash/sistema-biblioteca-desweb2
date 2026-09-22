@@ -10,6 +10,7 @@ import {
   Minimize2
 } from 'lucide-react';
 import axios from 'axios';
+import { getBookRealContent } from '../data/realChapters';
 
 export default function EbookReader({
   livro,
@@ -31,7 +32,7 @@ export default function EbookReader({
 
   const containerRef = useRef(null);
 
-  // 1. Carregar Conteúdo do E-book da API
+  // 1. Carregar Conteúdo do E-book da API ou Acervo Real Integrado
   useEffect(() => {
     let ativo = true;
 
@@ -42,32 +43,17 @@ export default function EbookReader({
 
         let data = null;
         try {
-          const res = await axios.get(`${apiUrl}/digital-books/${livro.id}/content`, { timeout: 3500 });
-          data = res.data;
+          const res = await axios.get(`${apiUrl}/digital-books/${livro.id}/content`, { timeout: 3000 });
+          if (res.data && res.data.chapters && res.data.chapters.length > 0) {
+            data = res.data;
+          }
         } catch {
-          // Fallback autônomo para leitura no ambiente de nuvem / Vercel
-          data = {
-            title: livro.title,
-            author: livro.authors || livro.author,
-            chapters: [
-              {
-                title: 'Apresentação da Obra e Introdução',
-                content: `<p class="lead">Esta é uma edição digital em domínio público preservada pelo <strong>Project Gutenberg</strong> e catalogada no acervo do <strong>BiblioGest</strong>.</p><p><strong>Título:</strong> ${livro.title}</p><p><strong>Autoria:</strong> ${livro.authors || livro.author || 'Autor da Obra'}</p><p><strong>Idioma:</strong> ${livro.language === 'pt' ? 'Língua Portuguesa' : 'Língua Inglesa'}</p><p>O acervo do BiblioGest permite a qualquer leitor descobrir obras fundamentais, registrar seu progresso e retomar sua leitura de qualquer dispositivo.</p>`
-              },
-              {
-                title: 'Capítulo I — Do Início e Circunstâncias',
-                content: `<p>A obra <em>${livro.title}</em> constitui um dos monumentos do acervo literário mundial disponibilizado livremente em domínio público.</p><p>No leitor digital do BiblioGest, você pode ajustar o tamanho da fonte, alternar para o tema Papel, Sépia ou Noturno, e navegar facilmente entre os capítulos com as setas do teclado.</p><p>A leitura é preservada localmente e sincronizada para que você nunca perca sua posição no livro.</p>`
-              },
-              {
-                title: 'Capítulo II — Do Enredo e Personagens',
-                content: `<p>À medida que a narrativa de <em>${livro.title}</em> avança, novos elementos e reflexões se desenrolam.</p><p>O leitor pode acompanhar a barra dourada no topo que indica a porcentagem concluída da obra, incentivando o hábito constante de leitura e formação cultural.</p>`
-              },
-              {
-                title: 'Capítulo III — Considerações e Epílogo',
-                content: `<p>Concluindo a exploração desta edição de <em>${livro.title}</em>, o leitor pode marcar esta obra como favorita e explorar centenas de outros clássicos no catálogo digital do BiblioGest.</p>`
-              }
-            ]
-          };
+          // Backend indisponível ou execução em nuvem (Vercel)
+        }
+
+        // Se o backend não respondeu ou não tem capítulos, carregar os capítulos reais da obra
+        if (!data || !data.chapters || data.chapters.length === 0) {
+          data = getBookRealContent(livro);
         }
 
         if (!ativo) return;
@@ -75,7 +61,7 @@ export default function EbookReader({
 
         // Se o livro já tinha progresso salvo, retomar na posição
         if (livro.progress?.chapter_index !== undefined) {
-          const capSalvo = Math.min(livro.progress.chapter_index, (data.chapters?.length || 1) - 1);
+          const capSalvo = Math.min(livro.progress.chapter_index, (data?.chapters?.length || 1) - 1);
           setCapituloAtual(capSalvo);
         }
       } catch {
