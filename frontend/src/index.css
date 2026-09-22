@@ -1,21 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --color-emerald-deep: #0D3E30;
-  --color-emerald-primary: #125542;
-  --color-emerald-hover: #196D55;
-  --color-gold-primary: #C59B4C;
-  --color-gold-hover: #AF8436;
-  --color-gold-light: #F7F1E1;
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  
+  --brand-emerald-dark: #092C22;
+  --brand-emerald: #0D4032;
+  --brand-emerald-light: #155E4A;
+  --brand-emerald-surface: #F0F6F4;
+  
+  --brand-gold-dark: #A37E36;
+  --brand-gold: #C49B4B;
+  --brand-gold-light: #DFBF77;
+  --brand-gold-surface: #FDFBF6;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
   background-color: #F8FAF9;
-  color: #1A2621;
+  color: #172420;
 }
 
-/* Efeito sutil de foco e transição suave */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Transições fluidas e suaves */
 button, input, select, textarea, a {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -24,4 +34,13 @@ button, input, select, textarea, a {
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Sombra suave e elegante para cards de livros */
+.book-shadow {
+  box-shadow: 0 10px 25px -5px rgba(13, 64, 50, 0.08), 0 8px 10px -6px rgba(13, 64, 50, 0.04);
+}
+
+.book-shadow-hover {
+  box-shadow: 0 20px 35px -5px rgba(13, 64, 50, 0.15), 0 12px 16px -6px rgba(13, 64, 50, 0.08);
 }
