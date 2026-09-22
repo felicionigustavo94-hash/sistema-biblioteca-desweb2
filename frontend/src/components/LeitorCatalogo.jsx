@@ -24,6 +24,7 @@ export default function LeitorCatalogo({
   totalPaginas,
   totalLivros,
   onAbrirDetalhes,
+  onLerAgora,
   onLimparFiltros
 }) {
   return (

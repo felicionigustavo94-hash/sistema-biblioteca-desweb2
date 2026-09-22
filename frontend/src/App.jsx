@@ -601,6 +601,7 @@ export default function App() {
               totalPaginas={totalPaginasDigitais}
               totalLivros={totalLivrosDigitais}
               onAbrirDetalhes={handleAbrirDetalhes}
+              onLerAgora={handleLerAgora}
               onLimparFiltros={() => {
                 setBuscaDigital('');
                 setFiltroIdiomaDigital('all');
