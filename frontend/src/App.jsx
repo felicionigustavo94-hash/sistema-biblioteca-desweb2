@@ -239,18 +239,17 @@ export default function App() {
   const emprestimosAtivos = emprestimos.filter(e => e.status !== 'devolvido').length;
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] text-[#172420] flex flex-col selection:bg-[#C49B4B]/20 selection:text-[#0D4032]">
+    <div className="min-h-screen bg-[#F8FAF9] text-[#16241F] flex flex-col">
       
-      {/* 🏛️ NAVBAR LIMPA, LUMINOSA E COM ALTO CONTRASTE (DESIGN SYSTEM BIBLIOGEST) */}
+      {/* 🏛️ NAVBAR LIMPA, LUMINOSA E COM ALTO CONTRASTE */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
           
-          {/* Logo Oficial com Símbolo Nítido e Tipografia Marcante */}
+          {/* Logo Oficial com Símbolo Nítido e Tipografia Customizada (Syne) */}
           <div 
             onClick={() => { setPagina('catalogo'); carregarLivros(busca); }}
             className="flex items-center gap-3 cursor-pointer group select-none"
           >
-            {/* O Símbolo oficial (livro + pessoa + cubos dourados) nítido e sem corte */}
             <div className="flex items-center justify-center h-10 w-16 group-hover:scale-105 transition-transform duration-300">
               <img 
                 src="/logo-symbol.png" 
@@ -260,7 +259,7 @@ export default function App() {
             </div>
             
             <div className="flex flex-col">
-              <div className="flex items-center text-2xl font-black tracking-tight leading-none">
+              <div className="font-brand flex items-center text-2xl font-black tracking-tight leading-none">
                 <span className="text-[#0D4032]">Biblio</span>
                 <span className="text-[#C49B4B] ml-0.5">Gest</span>
               </div>
@@ -270,7 +269,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Abas de Navegação Estilizadas */}
+          {/* Abas de Navegação */}
           <nav className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-semibold">
             <button
               onClick={() => { setPagina('catalogo'); carregarLivros(busca); }}
@@ -411,25 +410,25 @@ export default function App() {
                   Sistema de Gestão de Biblioteca
                 </div>
                 
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#0D4032] leading-tight">
+                <h1 className="font-brand text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#0D4032] leading-tight">
                   Conhecimento em <span className="text-[#C49B4B]">boas mãos.</span>
                 </h1>
                 
-                <p className="font-serif italic text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+                <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl font-normal">
                   Explore o catálogo da BiblioGest com busca em tempo real, preenchimento automático de obras por ISBN e controle instantâneo de empréstimos.
                 </p>
 
                 {/* Métricas do Acervo */}
-                <div className="pt-2 flex flex-wrap gap-3 text-xs font-semibold text-[#0D4032]">
-                  <div className="bg-white px-4 py-2 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
+                <div className="pt-2 flex flex-wrap gap-3 text-xs font-bold text-[#0D4032]">
+                  <div className="bg-white px-4 py-2.5 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
                     <BookCheck className="w-4 h-4 text-[#C49B4B]" />
                     <span><strong>{livros.length}</strong> Obras no Acervo</span>
                   </div>
-                  <div className="bg-white px-4 py-2 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
+                  <div className="bg-white px-4 py-2.5 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
                     <Bookmark className="w-4 h-4 text-emerald-600" />
                     <span><strong>{totalDisponiveis}</strong> Exemplares Disponíveis</span>
                   </div>
-                  <div className="bg-white px-4 py-2 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
+                  <div className="bg-white px-4 py-2.5 rounded-xl border border-slate-200/90 shadow-sm flex items-center gap-2">
                     <Repeat className="w-4 h-4 text-[#C49B4B]" />
                     <span><strong>{emprestimosAtivos}</strong> Empréstimo(s) Ativo(s)</span>
                   </div>
@@ -443,7 +442,7 @@ export default function App() {
                   alt="BiblioGest" 
                   className="w-28 h-auto object-contain mb-2 drop-shadow" 
                 />
-                <span className="text-xl font-black text-[#0D4032] tracking-tight">
+                <span className="font-brand text-xl font-black text-[#0D4032] tracking-tight">
                   Biblio<span className="text-[#C49B4B]">Gest</span>
                 </span>
                 <span className="text-[8px] tracking-[0.2em] font-extrabold text-[#C49B4B] uppercase mt-0.5">
@@ -505,7 +504,7 @@ export default function App() {
                 <div className="w-14 h-14 bg-[#0D4032]/10 text-[#0D4032] rounded-2xl flex items-center justify-center mx-auto mb-2">
                   <BookOpen className="w-7 h-7" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-800">Nenhum livro localizado</h3>
+                <h3 className="font-brand text-lg font-bold text-slate-800">Nenhum livro localizado</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
                   {busca ? 'Nenhum resultado corresponde aos termos da pesquisa. Tente outras palavras-chave.' : 'O acervo ainda não possui obras cadastradas.'}
                 </p>
@@ -576,11 +575,11 @@ export default function App() {
                             </span>
                           )}
                           
-                          <h3 className="font-bold text-slate-900 text-base line-clamp-1 leading-snug" title={livro.title}>
+                          <h3 className="font-brand font-bold text-slate-900 text-base line-clamp-1 leading-snug" title={livro.title}>
                             {livro.title}
                           </h3>
                           
-                          <p className="text-xs text-slate-600 font-medium line-clamp-1">
+                          <p className="text-xs text-slate-600 font-semibold line-clamp-1">
                             {livro.author}
                           </p>
 
@@ -591,7 +590,7 @@ export default function App() {
                           )}
 
                           {livro.synopsis && (
-                            <p className="text-xs text-slate-500 line-clamp-2 pt-1 font-light leading-relaxed">
+                            <p className="text-xs text-slate-500 line-clamp-2 pt-1 font-normal leading-relaxed">
                               {livro.synopsis}
                             </p>
                           )}
@@ -631,7 +630,7 @@ export default function App() {
                 <div className="w-16 h-16 bg-[#C49B4B]/15 text-[#C49B4B] rounded-2xl flex items-center justify-center mx-auto">
                   <ShieldCheck className="w-8 h-8" />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900">Acesso Restrito a Administradores</h2>
+                <h2 className="font-brand text-2xl font-bold text-slate-900">Acesso Restrito a Administradores</h2>
                 <p className="text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
                   Para manter a curadoria e organização da <strong>BiblioGest</strong>, o cadastro de novas obras é exclusivo para perfis com privilégio de administrador.
                 </p>
@@ -648,7 +647,7 @@ export default function App() {
               <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
                 
                 <div>
-                  <h2 className="text-2xl font-black text-[#0D4032] tracking-tight">Cadastrar Obra no Acervo</h2>
+                  <h2 className="font-brand text-2xl font-black text-[#0D4032] tracking-tight">Cadastrar Obra no Acervo</h2>
                   <p className="text-xs text-slate-500 mt-1">
                     Preencha os dados da obra ou digite o ISBN para buscar automaticamente nas APIs públicas.
                   </p>
@@ -700,7 +699,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788576082675' })}
-                      className="font-medium text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
+                      className="font-semibold text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
                     >
                       Código Limpo
                     </button>
@@ -708,7 +707,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788580571875' })}
-                      className="font-medium text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
+                      className="font-semibold text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
                     >
                       O Guia do Mochileiro
                     </button>
@@ -716,7 +715,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setNovoLivro({ ...novoLivro, isbn: '9788535914849' })}
-                      className="font-medium text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
+                      className="font-semibold text-[#0D4032] underline hover:text-[#C49B4B] cursor-pointer"
                     >
                       1984
                     </button>
@@ -821,7 +820,7 @@ export default function App() {
         {pagina === 'emprestimos' && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-black text-[#0D4032] tracking-tight">Controle de Empréstimos</h1>
+              <h1 className="font-brand text-2xl font-black text-[#0D4032] tracking-tight">Controle de Empréstimos</h1>
               <p className="text-xs text-slate-500 mt-1">
                 Acompanhamento em tempo real dos livros retirados, prazos de devolução e baixa de estoque.
               </p>
@@ -830,7 +829,7 @@ export default function App() {
             {emprestimos.length === 0 ? (
               <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 shadow-sm space-y-2">
                 <Repeat className="w-10 h-10 text-slate-300 mx-auto" />
-                <h3 className="text-base font-bold text-slate-800">Nenhum empréstimo ativo</h3>
+                <h3 className="font-brand text-base font-bold text-slate-800">Nenhum empréstimo ativo</h3>
                 <p className="text-xs text-slate-500">
                   Os empréstimos solicitados através do acervo aparecerão listados aqui.
                 </p>
@@ -907,7 +906,7 @@ export default function App() {
         {pagina === 'usuarios' && user?.role === 'admin' && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-black text-[#0D4032] tracking-tight">Gestão de Usuários & Acessos</h1>
+              <h1 className="font-brand text-2xl font-black text-[#0D4032] tracking-tight">Gestão de Usuários & Acessos</h1>
               <p className="text-xs text-slate-500 mt-1">
                 Controle de papéis e permissões no ecossistema BiblioGest.
               </p>
@@ -980,7 +979,7 @@ export default function App() {
                   />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-[#0D4032]">
+                  <h2 className="font-brand text-2xl font-black text-[#0D4032]">
                     Biblio<span className="text-[#C49B4B]">Gest</span>
                   </h2>
                   <p className="text-xs text-slate-500 font-medium">
@@ -1103,11 +1102,11 @@ export default function App() {
           <div className="flex items-center gap-3">
             <img src="/logo-symbol.png" alt="BiblioGest" className="w-8 h-auto object-contain" />
             <div className="flex items-center gap-2">
-              <span className="font-black text-sm text-[#0D4032]">
+              <span className="font-brand font-black text-sm text-[#0D4032]">
                 Biblio<span className="text-[#C49B4B]">Gest</span>
               </span>
               <span className="text-slate-300">•</span>
-              <span className="font-serif italic text-slate-500 text-xs">Conhecimento em boas mãos</span>
+              <span className="font-semibold text-slate-500 text-xs">Conhecimento em boas mãos</span>
             </div>
           </div>
           <div className="text-center sm:text-right text-[11px] text-slate-400 font-medium">
