@@ -1,7 +1,54 @@
-﻿# 📚 Sistema de Gestão de Biblioteca kkkkkk
+# 📚 Sistema de Gestão de Biblioteca
 > Trabalho Semestral da disciplina de **Desenvolvimento Web II** (Fatec).
 
 Sistema web simples, completo e funcional de gestão de biblioteca desenvolvido com **Laravel (Back-end API)**, **React (Front-end SPA)** e **PostgreSQL (Supabase / Local)**.
+
+---
+
+## 🏛️ Modelagem do Banco de Dados (DER)
+
+Diagrama Entidade-Relacionamento das principais entidades gerenciadas pelo sistema via Eloquent ORM:
+
+```mermaid
+erDiagram
+    USERS ||--o{ LOANS : "realiza"
+    BOOKS ||--o{ LOANS : "pertence"
+
+    USERS {
+        bigint id PK "Identificador único"
+        string name "Nome completo"
+        string email UK "E-mail único de acesso"
+        string password "Senha criptografada (bcrypt)"
+        string role "Perfil: admin ou leitor"
+        string phone "Telefone de contato"
+        timestamp created_at
+    }
+
+    BOOKS {
+        bigint id PK "Identificador único"
+        string title "Título da obra"
+        string author "Autor(es)"
+        string genre "Gênero literário"
+        string isbn UK "Código ISBN"
+        string cover_path "URL ou arquivo da capa"
+        text synopsis "Sinopse do livro"
+        int total_copies "Total de exemplares"
+        int available_copies "Exemplares disponíveis"
+        string published_year "Ano de publicação"
+        timestamp created_at
+    }
+
+    LOANS {
+        bigint id PK "Identificador do empréstimo"
+        bigint user_id FK "Chave estrangeira -> users"
+        bigint book_id FK "Chave estrangeira -> books"
+        date loan_date "Data de retirada"
+        date due_date "Data prevista de devolução"
+        date return_date "Data de devolução real"
+        string status "ativo | devolvido | atrasado"
+        timestamp created_at
+    }
+```
 
 ---
 
@@ -11,14 +58,15 @@ Sistema web simples, completo e funcional de gestão de biblioteca desenvolvido 
    - Listagem com visualização de capas, autor, gênero e estoque disponível.
    - Busca em tempo real por título, autor ou ISBN.
 2. **Cadastro com Busca Mágica por ISBN:**
-   - Digite o código ISBN e clique em **"Buscar Dados"**: o sistema consulta a **Google Books API / Open Library API** e preenche título, autor, gênero, sinopse e capa automaticamente!
+   - Digite o código ISBN e clique em **"Buscar Dados"**: o sistema consulta as APIs públicas (**BrasilAPI**, **Open Library** e **Google Books**) e preenche título, autor, gênero, sinopse e capa automaticamente!
 3. **Controle de Empréstimos:**
    - Realização de empréstimo (diminui 1 exemplar do estoque).
    - Devolução de livro (restaura 1 exemplar no estoque).
-   - Renovação de prazo (+7 dias).
-   - Alerta visual para empréstimos em atraso.
-4. **Autenticação & Perfis:**
+   - Alerta visual para empréstimos ativos e devolvidos.
+4. **Autenticação, Permissões & Perfis:**
    - Login e cadastro de usuários com perfis **Admin** e **Leitor**.
+   - Painel exclusivo do Admin para gerenciar permissões e promover outros usuários a administradores.
+   - Restrição de cadastro e exclusão de livros exclusivamente para administradores.
 
 ---
 
@@ -34,7 +82,12 @@ Sistema web simples, completo e funcional de gestão de biblioteca desenvolvido 
 
 ## 🚀 Como Rodar Localmente no seu Computador
 
-### Método 1: Rodando em 2 Terminais (Mais simples e direto para desenvolvimento)
+### Método 1: Dois Cliques no Windows (Mais Fácil)
+1. Dê dois cliques no arquivo **`iniciar_projeto.bat`** na raiz do projeto.
+2. Ele abrirá o Back-end e o Front-end simultaneamente em duas janelas.
+3. Abra **`http://localhost:5173`** no seu navegador!
+
+### Método 2: Rodando em 2 Terminais
 
 #### **1. Iniciar o Back-end (Laravel):**
 Abra o primeiro terminal na pasta do projeto:
@@ -57,7 +110,7 @@ Abra `http://localhost:5173` no seu navegador para ver o sistema funcionando!
 
 ---
 
-### Método 2: Rodando com Docker Compose (Comando único)
+### Método 3: Rodando com Docker Compose
 
 Se você tiver o Docker Desktop instalado:
 ```bash
@@ -76,7 +129,7 @@ O sistema já vem com contas pré-cadastradas para demonstrar na aula:
 
 | Perfil | E-mail | Senha | O que pode fazer? |
 | :--- | :--- | :--- | :--- |
-| **👑 Administrador** | `admin@biblioteca.com` | `password123` | Cadastrar, excluir livros e gerenciar todos os empréstimos |
+| **👑 Administrador** | `admin@biblioteca.com` | `password123` | Cadastrar, excluir livros e gerenciar todos os empréstimos e usuários |
 | **📖 Leitor / Aluno** | `leitor@biblioteca.com` | `password123` | Ver acervo e solicitar empréstimos de livros |
 
 ---
