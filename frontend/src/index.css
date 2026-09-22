@@ -1,46 +1,138 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   BiblioGest — Tokens de Implementação (design.md · Seção 15)
+   ========================================================================== */
+
 :root {
-  --font-brand: 'Fraunces', serif;
-  --font-sans: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif;
+  color-scheme: light;
   
-  --brand-emerald-dark: #07271D;
-  --brand-emerald: #0A3528;
-  --brand-emerald-light: #125541;
-  --brand-gold: #C59B4C;
-  --brand-gold-hover: #AF8436;
+  /* Cores de Marca */
+  --bg-brand-950: #072a24;
+  --bg-brand-900: #0a372f;
+  --bg-brand-800: #154b41;
+  --bg-brand-700: #1d5e51;
+  --bg-brand-100: #dcede6;
+  --bg-brand-50: #eff6f2;
+  
+  /* Dourado Cultural */
+  --bg-gold-700: #80602b;
+  --bg-gold-500: #c6a15b;
+  --bg-gold-100: #f3e8cd;
+
+  /* Superfícies e Canvas */
+  --bg-canvas: #f7f6f1;
+  --bg-surface: #ffffff;
+  --bg-surface-subtle: #f0f2ed;
+  --bg-text: #203b34;
+  --bg-text-muted: #5c6d65;
+  --bg-border: #d5ded7;
+  --bg-border-control: #7d8d83;
+  
+  /* Ações */
+  --bg-action: var(--bg-brand-700);
+  --bg-action-hover: var(--bg-brand-800);
+  --bg-action-pressed: var(--bg-brand-950);
+  --bg-on-action: #ffffff;
+  --bg-selected: var(--bg-brand-100);
+  --bg-focus: var(--bg-brand-700);
+  --bg-focus-on-dark: #f3e8cd;
+
+  /* Cores Semânticas de Circulação */
+  --bg-success: #216044;
+  --bg-success-soft: #eaf4ed;
+  --bg-info: #285e7b;
+  --bg-info-soft: #edf3f8;
+  --bg-warning: #80520e;
+  --bg-warning-soft: #fff3d8;
+  --bg-danger: #a43535;
+  --bg-danger-soft: #fbedec;
+  --bg-disabled: #f0f2ed;
+  --bg-disabled-text: #5c6d65;
+
+  /* Tipografia */
+  --bg-font-ui: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --bg-font-editorial: "Lora", Georgia, serif;
+
+  /* Espaçamento */
+  --bg-space-1: 4px;
+  --bg-space-2: 8px;
+  --bg-space-3: 12px;
+  --bg-space-4: 16px;
+  --bg-space-6: 24px;
+  --bg-space-8: 32px;
+  --bg-space-10: 40px;
+  --bg-space-12: 48px;
+  --bg-space-16: 64px;
+
+  /* Geometria */
+  --bg-radius-sm: 4px;
+  --bg-radius-control: 6px;
+  --bg-radius-panel: 8px;
+  --bg-radius-dialog: 12px;
+  --bg-control-height: 44px;
+  --bg-sidebar-width: 232px;
+  --bg-header-height: 64px;
+  
+  /* Elevação */
+  --bg-shadow-menu: 0 6px 20px rgb(10 55 47 / 10%);
+  --bg-shadow-dialog: 0 16px 48px rgb(10 55 47 / 18%);
+  
+  /* Movimento */
+  --bg-duration-fast: 140ms;
+  --bg-duration-panel: 200ms;
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: #FAF7F2;
-  color: #182620;
-}
-
-.font-brand {
-  font-family: var(--font-brand);
-}
-
-.font-sans {
-  font-family: var(--font-sans);
-}
-
-/* Transições fluidas */
-button, input, select, textarea, a {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-* {
+  margin: 0;
+  background-color: var(--bg-canvas);
+  color: var(--bg-text);
+  font-family: var(--bg-font-ui);
+  font-size: 1rem;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Sombra e textura com toque de papel editorial */
-.paper-shadow {
-  box-shadow: 0 4px 20px -2px rgba(10, 53, 40, 0.05), 0 2px 6px -1px rgba(10, 53, 40, 0.03);
+/* Foco visível acessível (design.md: 2px com 2px de separação) */
+:focus-visible {
+  outline: 2px solid var(--bg-focus);
+  outline-offset: 2px;
 }
 
-.paper-card-hover:hover {
-  box-shadow: 0 16px 32px -4px rgba(10, 53, 40, 0.12), 0 4px 12px -2px rgba(10, 53, 40, 0.06);
-  transform: translateY(-2px);
+[data-surface="dark"] {
+  --bg-focus: var(--bg-focus-on-dark);
+}
+
+/* Tipografia Editorial Lora (reservada a chamadas e entradas) */
+.font-editorial {
+  font-family: var(--bg-font-editorial);
+}
+
+/* Algarismos Tabulares para Contagens e Datas */
+.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Transições fluidas e respeitosas */
+button, input, select, textarea, a {
+  transition: background-color var(--bg-duration-fast) ease,
+              border-color var(--bg-duration-fast) ease,
+              color var(--bg-duration-fast) ease,
+              box-shadow var(--bg-duration-fast) ease;
+}
+
+/* Motivo Exclusivo: Marcador de Página Ativo */
+.nav-bookmark-active {
+  border-left: 3px solid var(--bg-brand-700);
+  background-color: var(--bg-brand-50);
+  color: var(--bg-brand-900);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bg-duration-fast: 0ms;
+    --bg-duration-panel: 0ms;
+  }
 }

@@ -231,9 +231,12 @@ class BibliotecaController extends Controller
         }
 
         $user = $request->user();
+        $targetUserId = ($user && $user->role === 'admin' && $request->filled('user_id')) 
+            ? $request->user_id 
+            : ($user ? $user->id : 1);
 
         $loan = Loan::create([
-            'user_id' => $user ? $user->id : 1,
+            'user_id' => $targetUserId,
             'book_id' => $book->id,
             'loan_date' => Carbon::today()->format('Y-m-d'),
             'due_date' => Carbon::today()->addDays(14)->format('Y-m-d'),
